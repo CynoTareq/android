@@ -4,9 +4,10 @@ import android.util.Log
 import com.google.gson.Gson
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import okhttp3.*
 import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.OkHttpClient
+import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.logging.HttpLoggingInterceptor
 import java.io.IOException
@@ -27,35 +28,61 @@ class NetworkService {
         responseType: Class<T>
     ): Result<T> = withContext(Dispatchers.IO) {
         try {
-            // Build the URL with query parameters
-            val urlBuilder = "${Config.BASE_URL}$path".toHttpUrlOrNull()?.newBuilder() // Updated here
+            val urlBuilder = "${Config.BASE_URL}$path".toHttpUrlOrNull()?.newBuilder()
                 ?: throw NetworkError.InvalidURL
             queryParams?.forEach { (key, value) ->
                 urlBuilder.addQueryParameter(key, value)
             }
             val url = urlBuilder.build()
 
-            // Create the request
             val request = Request.Builder()
                 .url(url)
                 .header("CYNOMYS-API-KEY", Config.CYNOMYS_API_KEY)
                 .get()
                 .build()
 
-            // Execute the request
+            Log.d("NetworkService", "Executing GET request: ${request.url}")
             val response = okHttpClient.newCall(request).execute()
+            Log.d("NetworkService", "Received response for ${request.url}: ${response.code}")
+
             if (!response.isSuccessful) {
+                Log.e("NetworkService", "HTTP request failed with code: ${response.code}, message: ${response.message}")
                 throw NetworkError.BadStatusCode(response.code)
             }
 
-            // Parse the response
-            val jsonString = response.body?.string() ?: throw NetworkError.NoContent
-            val responseObject = Gson().fromJson(jsonString, responseType)
-            Result.success(responseObject)
+            val responseBody = response.body?.string()
+            Log.d("NetworkService", "Response body received: ${responseBody?.take(200)}...") // Log first 200 chars
+
+            if (responseBody.isNullOrEmpty()) {
+                Log.e("NetworkService", "Response body is null or empty.")
+                // If the expected response type is String, an empty string might be valid.
+                // Otherwise, it might be an error.
+                if (responseType == String::class.java) {
+                    @Suppress("UNCHECKED_CAST")
+                    return@withContext Result.success("" as T) // Return empty string for String type
+                } else {
+                    throw NetworkError.NoContent // Or throw specific error if no content is not valid
+                }
+            }
+
+            if (responseType == String::class.java) {
+                @Suppress("UNCHECKED_CAST")
+                Log.d("NetworkService", "Returning raw JSON string.")
+                return@withContext Result.success(responseBody as T)
+            }
+
+            // For other types, try to deserialize JSON
+            val gson = Gson()
+            val parsedBody = gson.fromJson(responseBody, responseType)
+            Log.d("NetworkService", "Successfully parsed JSON into ${responseType.simpleName}.")
+            Result.success(parsedBody)
+
         } catch (e: Exception) {
+            Log.e("NetworkService", "Exception in NetworkService GET: ${e.message}", e)
             Result.failure(NetworkError.fromException(e))
         }
     }
+
 
     // Generic POST request
     suspend fun <T : Any, U : Any> post(

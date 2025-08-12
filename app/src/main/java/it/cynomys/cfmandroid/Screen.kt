@@ -1,7 +1,4 @@
-// Screen.kt
 package it.cynomys.cfmandroid
-
-import java.util.UUID
 
 sealed class Screen(val route: String) {
     object Login : Screen("login")
@@ -10,17 +7,23 @@ sealed class Screen(val route: String) {
     object FarmDetail : Screen("farm_detail/{farmId}") {
         fun createRoute(farmId: String) = "farm_detail/$farmId"
     }
-    /*
+
     object Devices : Screen("farm_detail/{farmId}/devices") {
         fun createRoute(farmId: String) = "farm_detail/$farmId/devices"
     }
 
-     */
     object Weather : Screen("farm_detail/{farmId}/weather") {
         fun createRoute(farmId: String) = "farm_detail/$farmId/weather"
     }
-    object Silos : Screen("farm_detail/{farmId}/silos") {
-        fun createRoute(farmId: String) = "farm_detail/$farmId/silos"
+    // Changed Silos route to make penId optional
+    object Silos : Screen("farm_detail/{farmId}/silos?penId={penId}") {
+        fun createRoute(farmId: String, penId: String? = null): String {
+            return if (penId != null) {
+                "farm_detail/$farmId/silos?penId=$penId"
+            } else {
+                "farm_detail/$farmId/silos"
+            }
+        }
     }
     object Webcams : Screen("farm_detail/{farmId}/webcams") {
         fun createRoute(farmId: String) = "farm_detail/$farmId/webcams"
@@ -29,22 +32,49 @@ sealed class Screen(val route: String) {
     object EditFarm : Screen("edit_farm/{farmId}") {
         fun createRoute(farmId: String) = "edit_farm/$farmId"
     }
-    object CameraLiveView : Screen("camera_live/{cameraId}") {
-        fun createRoute(cameraId: String) = "camera_live/$cameraId"
-    }
-    object DeviceList : Screen("device_list/{ownerId}/{farmId}") {
-        fun createRoute(ownerId: UUID, farmId: UUID) = "device_list/$ownerId/$farmId"
+
+    object DeviceList : Screen("device_list") {
+        fun createRoute(ownerId: String, farmId: String) = "device_list/$ownerId/$farmId"
     }
 
-    object DeviceDetail : Screen("device_detail/{deviceId}") {
-        fun createRoute(deviceId: String) = "device_detail/$deviceId"
+    // Corrected: Added {farmId} to DeviceDetail route
+    object DeviceDetail : Screen("device_detail/{deviceId}/{farmId}") {
+        fun createRoute(deviceId: String, farmId: String) = "device_detail/$deviceId/$farmId"
     }
 
-    object DeviceEdit : Screen("edit_device/{deviceId}") {
-        fun createRoute(deviceId: UUID) = "edit_device/$deviceId"
+    object DeviceEdit : Screen("edit_device/{deviceId}/{farmId}") {
+        fun createRoute(deviceId: String, farmId: String) = "edit_device/$deviceId/$farmId"
     }
 
-    object DeviceAdd : Screen("add_device/{ownerId}/{farmId}") {
-        fun createRoute(ownerId: UUID, farmId: UUID) = "add_device/$ownerId/$farmId"
+    object DeviceAdd : Screen("add_device") {
+        fun createRoute(farmId: String) = "add_device/$farmId"
     }
+
+    object DeviceView : Screen("device_view/{deviceId}/{farmId}") {
+        fun createRoute(deviceId: String, farmId: String) = "device_view/$deviceId/$farmId"
+    }
+
+    // Camera screens
+    object CameraAdd : Screen("camera_add/{farmId}") {
+        fun createRoute(farmId: String) = "camera_add/$farmId"
+    }
+
+    object CameraList : Screen("camera_list/{farmId}") {
+        fun createRoute(farmId: String) = "camera_list/$farmId"
+    }
+
+    object CameraLive : Screen("camera_live/{cameraUrl}") {
+        fun createRoute(cameraUrl: String) = "camera_live/$cameraUrl"
+    }
+
+    object CameraEdit : Screen("camera_edit/{cameraId}") {
+        fun createRoute(cameraId: String) = "camera_edit/$cameraId"
+    }
+    // Profile Screen
+    object Profile : Screen("profile/{ownerId}") {
+        fun createRoute(ownerId: String) = "profile/$ownerId"
+    }
+
+    // QR Scanner
+    object QRScanner : Screen("qr_scanner")
 }

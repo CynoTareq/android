@@ -1,7 +1,7 @@
 package it.cynomys.cfmandroid.util
 
 import com.google.gson.annotations.SerializedName
-import java.util.*
+import java.util.Date
 
 data class LoginResponse(
     @SerializedName("id") val id: String,
