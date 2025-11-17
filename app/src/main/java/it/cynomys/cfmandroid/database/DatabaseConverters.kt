@@ -17,18 +17,15 @@ class DatabaseConverters {
         return date?.time
     }
 
+    // In DatabaseConverters.kt
     @TypeConverter
-    fun fromUUID(uuid: UUID?): String? {
-        return uuid?.toString()
+    fun toUUID(value: String?): UUID? {
+        return if (value.isNullOrEmpty()) null else UUID.fromString(value)
     }
 
     @TypeConverter
-    fun toUUID(uuidString: String?): UUID? {
-        return try {
-            UUID.fromString(uuidString)
-        } catch (e: IllegalArgumentException) {
-            null
-        }
+    fun fromUUID(uuid: UUID?): String? {
+        return uuid?.toString()
     }
 
     // NEW: Type Converters for Species enum

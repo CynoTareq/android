@@ -12,5 +12,6 @@ class FarmViewModelFactory(private val context: Context) : ViewModelProvider.Fac
             return FarmViewModel(context) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class")
-    }
+    }// Add this method to your OfflineRepository class
+
 }

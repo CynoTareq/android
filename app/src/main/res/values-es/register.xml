@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="accept">Acepte</string>
+    <string name="agree">Acepto la</string>
+    <string name="already_created">Usuario ya creado</string>
+    <string name="already_have">¿Ya tiene una cuenta?</string>
+    <string name="characters">Al menos 8 caracteres</string>
+    <string name="child_owner_created">Cuenta de empleado creada correctamente</string>
+    <string name="create1">Crea tu </string>
+    <string name="create2">cuenta</string>
+    <string name="created">Usuario creado correctamente</string>
+    <string name="eula"> Acuerdo de licencia de usuario final (CLUF)</string>
+
+    <string name="lowercase">Una letra minúscula</string>
+    <string name="number">Un número</string>
+    <string name="register">Cree</string>
+    <string name="special">Carácter especial (opcional)</string>
+    <string name="uppercase">Una letra mayúscula</string>
+    <string name="user">Nombre de usuario</string>
+</resources>

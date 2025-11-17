@@ -15,9 +15,9 @@ android {
     defaultConfig {
         applicationId = "it.cynomys.cfmandroid"
         minSdk = 24
-        targetSdk = 34
-        versionCode = 1
-        versionName = "1.0"
+        targetSdk = 35
+        versionCode = 5
+        versionName = "2.3"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -76,6 +76,9 @@ dependencies {
     val work_version = "2.9.0" // Use the latest stable version
     implementation("androidx.work:work-runtime-ktx:$work_version")
 
+
+
+
     // Retrofit for network requests
     implementation ("com.squareup.retrofit2:retrofit:2.9.0")
     implementation ("com.squareup.retrofit2:converter-gson:2.9.0") // For JSON parsing
@@ -89,6 +92,10 @@ dependencies {
     implementation ("androidx.webkit:webkit:1.8.0")
 
     implementation ("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3")
+
+
+    implementation("androidx.appcompat:appcompat:1.7.1") // Or the latest stable version
+    implementation("androidx.core:core-ktx:1.12.0")
 
 // CameraX Core
     implementation ("androidx.camera:camera-core:1.3.0")

@@ -65,14 +65,17 @@ class ProfileViewModel : ViewModel() {
 
             try {
                 val result = networkService.put(
-                    path = "/owner/$ownerId/settings",
-                    body = updatedOwner.toProfileDto(),
-                    responseType = ProfileDto::class.java
+                    // Correct endpoint path
+                    path = "api/owner/$ownerId/settings",
+                    // Uses toProfileUpdateDto() which now formats 'birthday' as "yyyy-MM-dd" String
+                    body = updatedOwner.toProfileUpdateDto(),
+                    responseType = ProfileUpdateDto::class.java
                 )
 
                 result.fold(
                     onSuccess = { responseDto ->
-                        _owner.value = responseDto.toOwner()
+                        // Uses toOwner() which now parses the 'birthday' String back to a Date
+                        _owner.value = responseDto.toOwner(updatedOwner)
                         _updateSuccess.value = true
                         Log.d("ProfileViewModel", "Owner settings updated successfully for ${responseDto.email}")
                     },

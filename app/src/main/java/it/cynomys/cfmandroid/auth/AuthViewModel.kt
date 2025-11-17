@@ -4,9 +4,13 @@ import android.content.Context
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import it.cynomys.cfmandroid.auth.signup.SignupRequest
 import it.cynomys.cfmandroid.util.NetworkService
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.modules.SerializersModule
@@ -43,6 +47,12 @@ class AuthViewModel(private val context: Context? = null) : ViewModel() {
 
     private val _isSessionRestored = MutableStateFlow(false)
     val isSessionRestored: StateFlow<Boolean> = _isSessionRestored
+
+    private val _signupEvents = MutableSharedFlow<Boolean>(
+        replay = 0,               // Do not replay past events to new collectors
+        extraBufferCapacity = 1   // Allow one event to be sent before a collector is ready
+    )
+    val signupEvents: SharedFlow<Boolean> = _signupEvents.asSharedFlow()
 
     init {
         if (context != null) {
@@ -173,6 +183,47 @@ class AuthViewModel(private val context: Context? = null) : ViewModel() {
                     println("Session validation failed: $e")
                     logoutOwner()
                 }
+            }
+        }
+    }
+
+    // MODIFIED: To accept Settings and to only signal success, not log the user in.
+    fun signupOwner(name: String, email: String, password: String, settings: Settings) {
+        val signupRequest = SignupRequest(
+            name = name,
+            email = email,
+            password = password,
+            settings = settings
+        )
+
+        _isLoading.value = true
+        _isError.value = false
+
+        viewModelScope.launch {
+            try {
+                val result = networkService.post<SignupRequest, Owner>(
+                    path = "api/owner",
+                    body = signupRequest,
+                    responseType = Owner::class.java
+                )
+                when {
+                    result.isSuccess -> {
+                        // REMOVED: Automatic login logic
+                        _signupEvents.emit(true)
+                        println("Owner created successfully ------------------>")
+                        println(result.getOrNull().toString())
+                        Log.d("AuthViewModel", "User signed up successfully")
+                    }
+                    else -> {
+                        println("Error: ${result.exceptionOrNull()}")
+                        _isError.value = true
+                    }
+                }
+            } catch (e: Exception) {
+                println("Error during signup: $e")
+                _isError.value = true
+            } finally {
+                _isLoading.value = false
             }
         }
     }

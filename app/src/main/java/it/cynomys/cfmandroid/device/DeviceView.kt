@@ -7,7 +7,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -90,7 +90,7 @@ fun DeviceView(
                 },
                 navigationIcon = {
                     IconButton(onClick = { navController.popBackStack() }) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
                     }
                 }
             )
@@ -130,7 +130,8 @@ fun DeviceView(
                         deviceID = deviceID,
                         farmId = farmId,
                         viewModel = sensorDataViewModel,
-                        authViewModel = authViewModel
+                        authViewModel = authViewModel,
+                        type = "DEVICE"
                     )
                     1 -> deviceDetails?.let { device ->
                         val sensorNames = sensorDataState.keys?.toList() ?: emptyList()

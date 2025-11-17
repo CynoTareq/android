@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="access1">Acceda a su</string>
+    <string name="access2">Granja</string>
+    <string name="add_new">Añade tu nueva contraseña</string>
+    <string name="change_password">Cambiar contraseña</string>
+    <string name="enter">Introduzca su código de acceso</string>
+    <string name="enter_code">Introduzca su código</string>
+    <string name="forgot">¿Ha olvidado su contraseña?</string>
+    <string name="insert">Introduzca su nueva contraseña</string>
+    <string name="invalid">Credenciales no válidas</string>
+    <string name="invalid_login_code">Código de acceso no válido</string>
+    <string name="invalid_verify_code">Código de verificación no válido</string>
+    <string name="login">Iniciar sesión</string>
+    <string name="login_code">Compruebe el código de acceso en su correo electrónico</string>
+    <string name="manage">Medir Analizar Mejorar Comunicar</string>
+    <string name="new_password">Nueva contraseña</string>
+    <string name="new_to_us">¿Es nuevo?</string>
+    <string name="password_changed">Contraseña cambiada con éxito</string>
+    <string name="recover_code">Compruebe el código de recuperación en su correo electrónico</string>
+    <string name="signup">Inscribirse</string>
+    <string name="success">Inicio de sesión correcto</string>
+    <string name="verify">Verificar código</string>
+</resources>

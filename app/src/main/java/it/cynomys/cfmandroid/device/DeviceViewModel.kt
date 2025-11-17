@@ -1,8 +1,6 @@
 // DeviceViewModel.kt
 package it.cynomys.cfmandroid.device
 
-// IMPORTANT: REMOVE any local data class Owner and data class Farm definitions from THIS file.
-// They are now imported from their centralized locations.
 import android.content.Context
 import android.util.Log
 import androidx.lifecycle.ViewModel
@@ -37,6 +35,13 @@ class DeviceViewModel(private val context: Context) : ViewModel() {
 
     private val _selectedDevice = MutableStateFlow<Device?>(null)
     val selectedDevice: StateFlow<Device?> = _selectedDevice
+
+    // New: for license loading
+    private val _availableLicenses = MutableStateFlow<List<License>>(emptyList())
+    val availableLicenses: StateFlow<List<License>> = _availableLicenses
+
+    private val _isLoadingLicenses = MutableStateFlow(false)
+    val isLoadingLicenses: StateFlow<Boolean> = _isLoadingLicenses
 
     fun getDevices(ownerId: UUID, farmId: UUID) {
         viewModelScope.launch {
@@ -81,15 +86,14 @@ class DeviceViewModel(private val context: Context) : ViewModel() {
         viewModelScope.launch {
             _isLoading.value = true
             _error.value = null
-            _selectedDevice.value = null // Clear previous selection
+            _selectedDevice.value = null
 
             try {
                 ensureOwnerAndFarmExistLocally(ownerId, farmId)
 
                 if (offlineRepository.isOnline()) {
-                    // Attempt to fetch from network first
                     val result = networkService.get<Device>(
-                        path = "api/devices/getById/$deviceID", // Assuming such an API endpoint exists
+                        path = "api/devices/getById/$deviceID",
                         responseType = Device::class.java
                     )
                     if (result.isSuccess) {
@@ -100,19 +104,17 @@ class DeviceViewModel(private val context: Context) : ViewModel() {
                                 farmId = farmId,
                                 penId = it.penId ?: UUID.randomUUID()
                             )
-                            offlineRepository.insertDeviceLocally(offlineDevice) // Cache it
+                            offlineRepository.insertDeviceLocally(offlineDevice)
                             _selectedDevice.value = it
                         }
                     } else {
                         Log.e("DeviceViewModel", "Failed to load device from network: ${result.exceptionOrNull()?.message}")
-                        // Fallback to local if network fails
                         _selectedDevice.value = offlineRepository.getDeviceByDeviceIDLocally(deviceID)
                         if (_selectedDevice.value == null) {
                             _error.value = "Device not found: ${result.exceptionOrNull()?.message ?: "Unknown error"}"
                         }
                     }
                 } else {
-                    // Only fetch from local if offline
                     _selectedDevice.value = offlineRepository.getDeviceByDeviceIDLocally(deviceID)
                     if (_selectedDevice.value == null) {
                         _error.value = "Device not found offline."
@@ -120,9 +122,58 @@ class DeviceViewModel(private val context: Context) : ViewModel() {
                 }
             } catch (e: Exception) {
                 _error.value = e.message ?: "Failed to load device details"
-                _selectedDevice.value = offlineRepository.getDeviceByDeviceIDLocally(deviceID) // Try local as fallback
+                _selectedDevice.value = offlineRepository.getDeviceByDeviceIDLocally(deviceID)
             } finally {
                 _isLoading.value = false
+            }
+        }
+    }
+
+    // New: Load available licenses for the owner
+    fun loadAvailableLicenses(ownerEmail: String) {
+        viewModelScope.launch {
+            _isLoadingLicenses.value = true
+            _error.value = null
+            try {
+                // 1. Get all contracts
+                val contractsResult = networkService.get<Array<Contract>>(
+                    path = "api/contract/getAllContracts",
+                    responseType = Array<Contract>::class.java
+                )
+
+                if (contractsResult.isSuccess) {
+                    val contracts = contractsResult.getOrNull()?.toList() ?: emptyList()
+
+                    // 2. Filter contracts where DashboardUser matches owner email
+                    val matchingContracts = contracts.filter { contract ->
+                        // Use the Elvis operator (?:) to default to an empty string ("") if DashboardUser is null
+                        val dashboardUsers = contract.contractResponseDto.DashboardUser ?: ""
+
+                        // Split the DashboardUser string by comma, trim whitespace, and check if it contains the ownerEmail
+                        dashboardUsers
+                            .split(',')
+                            .map { it.trim() }
+                            .contains(ownerEmail)
+                    }
+                    // 3. Extract all licenses from matching contracts
+                    val allLicenses = matchingContracts.flatMap { it.licenses }
+
+                    // 4. Filter for device licenses only (type == "device")
+                    val deviceLicenses = allLicenses.filter { it.type == "device" }
+
+                    _availableLicenses.value = deviceLicenses
+
+                    Log.d("DeviceViewModel", "Loaded ${deviceLicenses.size} device licenses for $ownerEmail")
+                } else {
+                    _error.value = "Failed to load licenses: ${contractsResult.exceptionOrNull()?.message}"
+                    _availableLicenses.value = emptyList()
+                }
+            } catch (e: Exception) {
+                _error.value = "Failed to load licenses: ${e.message}"
+                _availableLicenses.value = emptyList()
+                Log.e("DeviceViewModel", "Exception loading licenses", e)
+            } finally {
+                _isLoadingLicenses.value = false
             }
         }
     }
@@ -201,13 +252,12 @@ class DeviceViewModel(private val context: Context) : ViewModel() {
                 coordinateY = 0.0,
                 address = "Unknown",
                 area = 0.0,
-                species = Species.OTHER, // Corrected reference
+                species = Species.OTHER,
                 lastSyncTime = Date()
             )
             offlineRepository.insertFarmLocally(offlineFarm!!)
         }
     }
-
 
     fun addDevice(ownerId: UUID, farmId: UUID, deviceDto: DeviceDto) {
         viewModelScope.launch {
@@ -215,7 +265,7 @@ class DeviceViewModel(private val context: Context) : ViewModel() {
             _error.value = null
             try {
                 val result = networkService.post<DeviceDto, Device>(
-                    path = "api/devices",
+                    path = "api/devices/$ownerId/$farmId",
                     body = deviceDto,
                     responseType = Device::class.java
                 )
@@ -256,7 +306,7 @@ class DeviceViewModel(private val context: Context) : ViewModel() {
                         val updatedDevice = result.getOrNull()
                         updatedDevice?.let {
                             val offlineDevice = it.toOfflineDevice(
-                                ownerId = it.ownerId ?: UUID.randomUUID(), // Ensure these are not null or provide defaults
+                                ownerId = it.ownerId ?: UUID.randomUUID(),
                                 farmId = it.farmId ?: UUID.randomUUID(),
                                 penId = it.penId ?: UUID.randomUUID()
                             )
@@ -273,6 +323,46 @@ class DeviceViewModel(private val context: Context) : ViewModel() {
             }
         }
     }
+
+
+
+
+
+    // UPDATED: Update Device using the specific edit endpoint
+    fun updateDevice(updateDto: DeviceUpdateDto, ownerId: UUID, farmId: UUID) {
+        viewModelScope.launch {
+            _isLoading.value = true
+            _error.value = null
+            try {
+                val result = networkService.put<DeviceUpdateDto, Device>(
+                    path = "api/devices/edit", // Updated endpoint
+                    body = updateDto,
+                    responseType = Device::class.java
+                )
+                if (result.isSuccess) {
+                    val updatedDevice = result.getOrNull()
+                    updatedDevice?.let {
+                        val offlineDevice = it.toOfflineDevice(
+                            ownerId = ownerId, // Use passed IDs as response might not have them populated
+                            farmId = farmId,
+                            penId = it.penId ?: UUID.randomUUID()
+                        )
+                        offlineRepository.updateDeviceLocally(offlineDevice)
+                        // Refresh list
+                        getDevices(ownerId, farmId)
+                    }
+                } else {
+                    _error.value = result.exceptionOrNull()?.message ?: "Failed to update device"
+                }
+            } catch (e: Exception) {
+                _error.value = e.message ?: "Failed to update device"
+            } finally {
+                _isLoading.value = false
+            }
+        }
+    }
+
+
 
     fun deleteDevice(deviceId: UUID, ownerId: UUID, farmId: UUID) {
         viewModelScope.launch {

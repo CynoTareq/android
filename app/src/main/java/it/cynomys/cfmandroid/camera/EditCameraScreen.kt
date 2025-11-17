@@ -8,7 +8,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -43,7 +43,7 @@ fun EditCameraScreen(
                 title = { Text("Edit Camera") },
                 navigationIcon = {
                     IconButton(onClick = { navController.popBackStack() }) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
                     }
                 }
             )
@@ -75,10 +75,15 @@ fun EditCameraScreen(
 
             Button(
                 onClick = {
-                    viewModel.updateCamera(
-                        camera.id!!,
-                        CameraDto(cameraLink, displayName)
+                    // 1. Create the correct DTO for the API body
+                    val updateDto = CameraEditDto(
+                        id = camera.id!!, // Include the ID
+                        cameraLink = cameraLink,
+                        displayName = displayName
                     )
+
+                    // 2. Call the viewModel with the correct DTO
+                    viewModel.updateCamera(updateDto)
                     navController.popBackStack()
                 },
                 modifier = Modifier.fillMaxWidth(),

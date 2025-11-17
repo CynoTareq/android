@@ -91,7 +91,7 @@ fun FarmItem(
                     Species.RUMINANT -> Icons.Default.Pets
                     Species.SWINE -> Icons.Default.Agriculture
                     Species.POULTRY -> Icons.Default.Egg
-                    Species.EQUINE -> Icons.Default.Pets
+                    //Species.EQUINE -> Icons.Default.Pets
                     else -> Icons.Default.Grass
                 },
                 text = farm.species.toString()

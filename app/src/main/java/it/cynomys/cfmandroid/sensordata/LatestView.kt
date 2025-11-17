@@ -34,7 +34,8 @@ fun LatestView(
     deviceID: String,
     farmId: String,
     viewModel: SensorDataViewModel,
-    authViewModel: AuthViewModel
+    authViewModel: AuthViewModel,
+    type:String = "DEVICE"
 ) {
     val latestSensorData by viewModel.latestSensorData.collectAsState()
     val isLoadingLatest by viewModel.isLoadingLatest.collectAsState()
@@ -65,7 +66,7 @@ fun LatestView(
         viewModel.getIndexes(
             farmId = currentFarmId,
             typeId = currentDeviceId,
-            type = "DEVICE"
+            type = type
         )
     }
 

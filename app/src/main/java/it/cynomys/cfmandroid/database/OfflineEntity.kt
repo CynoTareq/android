@@ -54,15 +54,19 @@ data class OfflineFarm(
     indices = [Index("farmId"), Index("deviceID")]
 )
 data class OfflineDevice(
-    @PrimaryKey val id: UUID,
-    val ownerId: UUID, // <--- ADD THIS LINE
+    @PrimaryKey
+    val id: UUID,
+    val ownerId: UUID,
     val farmId: UUID,
-    val penId: UUID,   // <--- ADD THIS LINE
+    val penId: UUID,
     val deviceID: String,
     val displayName: String,
     val predictions: Boolean,
     val indexes: String,
-    val lastSyncTime: Date = Date()
+    val license: String?,        // ADD THIS
+    val licenseId: UUID?,        // ADD THIS
+    val shouldNotify: Boolean,  // ADD THIS
+    val lastSyncTime: Date
 )
 
 @Entity(

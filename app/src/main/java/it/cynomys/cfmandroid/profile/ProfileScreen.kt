@@ -16,21 +16,20 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.AttachMoney
 import androidx.compose.material.icons.filled.Cancel
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Email
+import androidx.compose.material.icons.filled.ExitToApp
 import androidx.compose.material.icons.filled.Language
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Save
 import androidx.compose.material.icons.filled.SquareFoot
-import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Divider
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
@@ -57,6 +56,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import it.cynomys.cfmandroid.auth.AuthViewModel
 import it.cynomys.cfmandroid.auth.Settings
 import java.text.SimpleDateFormat
 import java.util.Calendar
@@ -98,11 +98,15 @@ val units: List<UnitOption> = listOf(
 fun ProfileScreen(
     ownerId: UUID,
     onNavigateBack: () -> Unit,
+    // ADDED: AuthViewModel for logout functionality
+    authViewModel: AuthViewModel = viewModel(),
     profileViewModel: ProfileViewModel = viewModel()
 ) {
     val owner by profileViewModel.owner.collectAsState()
     val isLoading by profileViewModel.isLoading.collectAsState()
     val isError by profileViewModel.isError.collectAsState()
+    // ADDED: Observe user session state to navigate after logout
+    val userSession by authViewModel.userSession.collectAsState()
 
     var isEditMode by remember { mutableStateOf(false) }
 
@@ -125,6 +129,14 @@ fun ProfileScreen(
     // Fetch settings when the screen loads
     LaunchedEffect(ownerId) {
         profileViewModel.fetchOwnerSettings(ownerId)
+    }
+
+    // ADDED: Effect to navigate back when userSession becomes null (i.e., after logout)
+    LaunchedEffect(userSession) {
+        if (userSession == null) {
+            // Navigate back, which should lead to the login/auth screen
+            onNavigateBack()
+        }
     }
 
     // Update UI states when owner data changes
@@ -175,16 +187,30 @@ fun ProfileScreen(
         isEditMode = false
     }
 
+    // ADDED: Logout function
+    fun logout() {
+        authViewModel.logoutOwner()
+    }
+
+
     Scaffold(
         topBar = {
             TopAppBar(
                 title = { Text("Profile") },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.Filled.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
                     }
                 },
                 actions = {
+                    // ADDED: Logout Icon is always available when not loading
+                    if (!isLoading) {
+                        IconButton(onClick = { logout() }) {
+                            Icon(Icons.Default.ExitToApp, contentDescription = "Logout")
+                        }
+                    }
+
+                    // Original Edit Icon is available only when not in edit mode and not loading
                     if (!isEditMode && !isLoading) {
                         IconButton(onClick = { isEditMode = true }) {
                             Icon(Icons.Default.Edit, contentDescription = "Edit Profile")
@@ -278,31 +304,35 @@ fun ProfileScreen(
                         )
 
                         // Birthday field with date picker
-                        if (isEditMode) {
-                            val datePickerDialog = remember {
-                                DatePickerDialog(
-                                    context,
-                                    { _: DatePicker, year: Int, month: Int, dayOfMonth: Int ->
-                                        val selectedDate = Calendar.getInstance().apply {
-                                            set(year, month, dayOfMonth)
-                                        }.time
-                                        birthday = selectedDate
-                                    },
-                                    birthday?.let { Calendar.getInstance().apply { time = it }.get(Calendar.YEAR) } ?: Calendar.getInstance().get(Calendar.YEAR),
-                                    birthday?.let { Calendar.getInstance().apply { time = it }.get(Calendar.MONTH) } ?: Calendar.getInstance().get(Calendar.MONTH),
-                                    birthday?.let { Calendar.getInstance().apply { time = it }.get(Calendar.DAY_OF_MONTH) } ?: Calendar.getInstance().get(Calendar.DAY_OF_MONTH)
-                                )
-                            }
+// Replace the birthday field section in your code with this:
 
+// Birthday field with date picker
+                        if (isEditMode) {
                             OutlinedTextField(
-                                value = birthday?.let { dateFormatter.format(it) } ?: "",
-                                onValueChange = { },
+                                value = birthday?.let { dateFormatter.format(it) } ?: "Select Birthday",
+                                onValueChange = {},
+                                readOnly = true,
                                 label = { Text("Birthday") },
                                 leadingIcon = { Icon(Icons.Default.DateRange, contentDescription = "Birthday") },
-                                readOnly = true,
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .clickable { datePickerDialog.show() }
+                                    .clickable {
+                                        val calendar = Calendar.getInstance()
+                                        birthday?.let { calendar.time = it }
+
+                                        DatePickerDialog(
+                                            context,
+                                            { _: DatePicker, year: Int, month: Int, day: Int ->
+                                                birthday = Calendar.getInstance().apply {
+                                                    set(year, month, day)
+                                                }.time
+                                            },
+                                            calendar.get(Calendar.YEAR),
+                                            calendar.get(Calendar.MONTH),
+                                            calendar.get(Calendar.DAY_OF_MONTH)
+                                        ).show()
+                                    },
+                                enabled = false
                             )
                         } else {
                             ProfileDisplayField(

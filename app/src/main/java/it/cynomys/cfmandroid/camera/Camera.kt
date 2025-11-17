@@ -13,3 +13,10 @@ data class CameraDto(
     val cameraLink: String,
     val displayName: String
 )
+
+// NEW: DTO matching the required API body for editing
+data class CameraEditDto(
+    val id: UUID, // Include the required camera ID
+    val cameraLink: String,
+    val displayName: String
+)

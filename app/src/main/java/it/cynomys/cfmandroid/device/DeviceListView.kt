@@ -14,9 +14,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -43,9 +44,10 @@ fun DeviceListView(
     ownerId: UUID,
     farmId: UUID,
     navController: NavController,
-    onBack: () -> Unit, // Added onBack parameter
-    onAddDevice: (farmId: UUID) -> Unit, // Added onAddDevice parameter
-    onDeviceSelected: (Device, farmId: UUID) -> Unit // Added onDeviceSelected parameter
+    onBack: () -> Unit,
+    onAddDevice: (farmId: UUID) -> Unit,
+    onEditDevice: (Device) -> Unit, // Added Callback
+    onDeviceSelected: (Device, farmId: UUID) -> Unit
 ) {
     val devices by viewModel.devices.collectAsState()
     val isLoading by viewModel.isLoading.collectAsState()
@@ -59,13 +61,13 @@ fun DeviceListView(
         topBar = {
             TopAppBar(
                 title = { Text("Devices") },
-                navigationIcon = { // Added navigation icon for back button
+                navigationIcon = {
                     IconButton(onClick = onBack) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
                     }
                 },
                 actions = {
-                    IconButton(onClick = { onAddDevice(farmId) }) { // Use onAddDevice lambda
+                    IconButton(onClick = { onAddDevice(farmId) }) {
                         Icon(Icons.Default.Add, contentDescription = "Add Device")
                     }
                 }
@@ -79,6 +81,7 @@ fun DeviceListView(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
+            // ... [Keep loading/error logic same as before] ...
             if (isLoading) {
                 FullScreenShimmer(title = "Loading Devices...")
             } else if (error != null) {
@@ -99,10 +102,11 @@ fun DeviceListView(
                         DeviceItem(
                             device = device,
                             onItemClick = {
-                                onDeviceSelected(device, farmId) // Use onDeviceSelected lambda
+                                onDeviceSelected(device, farmId)
                             },
+                            onEdit = { onEditDevice(device) }, // Pass to item
                             onDelete = {
-                                viewModel.deleteDevice(device.id!!, ownerId, farmId)
+                                device.id?.let { viewModel.deleteDevice(it, ownerId, farmId) }
                             }
                         )
                         Spacer(modifier = Modifier.height(8.dp))
@@ -117,6 +121,7 @@ fun DeviceListView(
 fun DeviceItem(
     device: Device,
     onItemClick: () -> Unit,
+    onEdit: () -> Unit, // Added
     onDelete: () -> Unit
 ) {
     Card(
@@ -130,10 +135,22 @@ fun DeviceItem(
             Text(text = device.displayName, style = MaterialTheme.typography.titleLarge)
             Text(text = "ID: ${device.deviceID}")
             Text(text = "Predictions: ${if (device.predictions) "Enabled" else "Disabled"}")
+
+            // Action Row
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.End
             ) {
+                // Edit Button
+                IconButton(onClick = onEdit) {
+                    Icon(
+                        imageVector = Icons.Default.Edit,
+                        contentDescription = "Edit",
+                        tint = MaterialTheme.colorScheme.primary
+                    )
+                }
+
+                // Delete Button
                 IconButton(onClick = onDelete) {
                     Icon(
                         imageVector = Icons.Default.Delete,

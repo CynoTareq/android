@@ -28,10 +28,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import org.osmdroid.config.Configuration
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory
+import org.osmdroid.util.BoundingBox
 import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.MapView
 import org.osmdroid.views.overlay.Marker
 import java.util.UUID
+
 
 
 @Composable
@@ -73,9 +75,6 @@ fun FarmMapView(
                     setTileSource(TileSourceFactory.MAPNIK)
                     setMultiTouchControls(true)
 
-                    // Set initial zoom and center
-                    controller.setZoom(10.0)
-
                     // Calculate positions to avoid overlapping
                     val markerPositions = calculateMarkerPositions(farms)
 
@@ -85,11 +84,11 @@ fun FarmMapView(
                             Species.RUMINANT -> android.graphics.Color.GREEN
                             Species.SWINE -> android.graphics.Color.MAGENTA
                             Species.POULTRY -> android.graphics.Color.YELLOW
-                            Species.EQUINE -> android.graphics.Color.BLUE
+                          //  Species.EQUINE -> android.graphics.Color.BLUE
                             else -> android.graphics.Color.RED
                         }
 
-                        val position = markerPositions[farm] ?: GeoPoint(farm.coordinateX, farm.coordinateY)
+                        val position = markerPositions[farm] ?: GeoPoint(farm.coordinateY, farm.coordinateX)
 
                         val marker = Marker(this).apply {
                             this.position = position
@@ -108,10 +107,11 @@ fun FarmMapView(
                         overlays.add(marker)
                     }
 
-                    // Center map on first farm if available
+                    // Fit all farms in the map view
                     if (farms.isNotEmpty()) {
-                        val firstFarm = farms.first()
-                        controller.setCenter(GeoPoint(firstFarm.coordinateX, firstFarm.coordinateY))
+                        fitBoundsToFarms(farms)
+                    } else {
+                        controller.setZoom(10.0)
                     }
 
                     invalidate()
@@ -130,11 +130,11 @@ fun FarmMapView(
                         Species.RUMINANT -> android.graphics.Color.GREEN
                         Species.SWINE -> android.graphics.Color.MAGENTA
                         Species.POULTRY -> android.graphics.Color.YELLOW
-                        Species.EQUINE -> android.graphics.Color.BLUE
+                       // Species.EQUINE -> android.graphics.Color.BLUE
                         else -> android.graphics.Color.RED
                     }
 
-                    val position = markerPositions[farm] ?: GeoPoint(farm.coordinateX, farm.coordinateY)
+                    val position = markerPositions[farm] ?: GeoPoint(farm.coordinateY, farm.coordinateX)
 
                     val marker = Marker(mapView).apply {
                         this.position = position
@@ -153,9 +153,39 @@ fun FarmMapView(
                     mapView.overlays.add(marker)
                 }
 
+                // Fit all farms in the map view
+                if (farms.isNotEmpty()) {
+                    mapView.fitBoundsToFarms(farms)
+                }
+
                 mapView.invalidate()
             }
         )
+    }
+}
+
+
+// Extension function to fit map bounds to show all farms
+fun MapView.fitBoundsToFarms(farms: List<Farm>) {
+    if (farms.isEmpty()) return
+
+    // Find min/max coordinates
+    val minLat = farms.minOf { it.coordinateY }
+    val maxLat = farms.maxOf { it.coordinateY }
+    val minLon = farms.minOf { it.coordinateX }
+    val maxLon = farms.maxOf { it.coordinateX }
+
+    // Create bounding box
+    val boundingBox = BoundingBox(
+        maxLat,  // north
+        maxLon,  // east
+        minLat,  // south
+        minLon   // west
+    )
+
+    // Fit map to bounding box with padding (100px padding)
+    post {
+        zoomToBoundingBox(boundingBox, true, 100)
     }
 }
 
@@ -280,20 +310,21 @@ fun createGoogleMapsMarker(context: android.content.Context, farmName: String, m
     return BitmapDrawable(context.resources, bitmap)
 }
 
+
 // Function to calculate offset positions for overlapping markers
 fun calculateMarkerPositions(farms: List<Farm>): Map<Farm, GeoPoint> {
     val positionMap = mutableMapOf<Farm, GeoPoint>()
-    val locationGroups = farms.groupBy { "${it.coordinateX},${it.coordinateY}" }
+    val locationGroups = farms.groupBy { "${it.coordinateY},${it.coordinateX}" }
 
     locationGroups.forEach { (_, farmsAtLocation) ->
         if (farmsAtLocation.size == 1) {
             // Single farm at location, no offset needed
             val farm = farmsAtLocation.first()
-            positionMap[farm] = GeoPoint(farm.coordinateX, farm.coordinateY)
+            positionMap[farm] = GeoPoint(farm.coordinateY, farm.coordinateX)
         } else {
             // Multiple farms at same location, create circular offset
-            val centerLat = farmsAtLocation.first().coordinateX
-            val centerLon = farmsAtLocation.first().coordinateY
+            val centerLat = farmsAtLocation.first().coordinateY
+            val centerLon = farmsAtLocation.first().coordinateX
             val offsetDistance = 0.001 // About 100 meters offset
 
             farmsAtLocation.forEachIndexed { index, farm ->
@@ -313,6 +344,3 @@ fun calculateMarkerPositions(farms: List<Farm>): Map<Farm, GeoPoint> {
 
     return positionMap
 }
-
-
-

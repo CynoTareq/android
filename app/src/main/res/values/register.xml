@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="accept">Accept</string>
+    <string name="agree">I agree to the</string>
+    <string name="already_created">User already created</string>
+    <string name="already_have">Already have an account?</string>
+    <string name="characters">At least 8 characters</string>
+    <string name="child_owner_created">Employee account created successfully</string>
+    <string name="create1">Create your </string>
+    <string name="create2">account</string>
+    <string name="created">User created successfully</string>
+    <string name="eula"> End User License Agreement (EULA)</string>
+    <string name="lowercase">One lowercase letter</string>
+    <string name="number">One number</string>
+    <string name="register">Create</string>
+    <string name="special">Special character (optional)</string>
+    <string name="uppercase">One uppercase letter</string>
+    <string name="user">Username</string>
+</resources>

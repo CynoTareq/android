@@ -88,7 +88,7 @@ fun IndexCard(
                 )
 
                 LinearProgressIndicator(
-                    progress = percentage.toFloat(),
+                    progress ={percentage.toFloat()} ,
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(6.dp),

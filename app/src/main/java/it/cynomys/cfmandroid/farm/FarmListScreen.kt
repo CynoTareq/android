@@ -1,12 +1,14 @@
+// FarmListScreen.kt
 package it.cynomys.cfmandroid.farm
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.List
 import androidx.compose.material.icons.filled.Map
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.CircularProgressIndicator
@@ -43,7 +45,9 @@ fun FarmListScreen(
     ownerId: UUID,
     onAddFarm: () -> Unit,
     onFarmSelected: (UUID) -> Unit,
-    onProfileSelected: () -> Unit
+    onProfileSelected: () -> Unit,
+    // NEW: Add a required parameter to navigate to the AddEditScreen for editing
+    onEditFarm: (UUID) -> Unit // We only need the Farm ID for navigation
 ) {
     val farms by viewModel.farms.collectAsState()
     val isLoading by viewModel.isLoading.collectAsState()
@@ -58,7 +62,10 @@ fun FarmListScreen(
         floatingActionButton = {
             FloatingActionButton(
                 onClick = onAddFarm,
-                containerColor = MaterialTheme.colorScheme.primaryContainer
+                containerColor = MaterialTheme.colorScheme.primaryContainer,
+                modifier = Modifier
+                    .padding(16.dp)
+                    .navigationBarsPadding()
             ) {
                 Icon(
                     imageVector = Icons.Default.Add,
@@ -107,7 +114,7 @@ fun FarmListScreen(
                             text = { Text("List") },
                             icon = {
                                 Icon(
-                                    imageVector = Icons.Default.List,
+                                    imageVector = Icons.AutoMirrored.Filled.List,
                                     contentDescription = "List View"
                                 )
                             }
@@ -155,7 +162,13 @@ fun FarmListScreen(
                     farms = farms,
                     isLoading = isLoading,
                     onFarmSelected = onFarmSelected,
-                    onEdit = { /* Handle edit */ },
+                    onEdit = { farm ->
+                        // FIX: Implement navigation to the edit screen
+                        if (farm.id != null) {
+                            // You need to pass the farm ID to the navigation function
+                            onEditFarm(farm.id!!)
+                        }
+                    },
                     onDelete = { farm -> viewModel.deleteFarm(farm.id!!, ownerId) }
                 )
                 1 -> FarmMapView(

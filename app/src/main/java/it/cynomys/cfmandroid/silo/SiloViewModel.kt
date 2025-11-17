@@ -7,6 +7,8 @@ import androidx.lifecycle.viewModelScope
 import it.cynomys.cfmandroid.auth.Owner
 import it.cynomys.cfmandroid.database.OfflineFarm
 import it.cynomys.cfmandroid.database.OfflineOwner
+import it.cynomys.cfmandroid.device.Contract
+import it.cynomys.cfmandroid.device.License
 import it.cynomys.cfmandroid.farm.Farm
 import it.cynomys.cfmandroid.farm.Species
 import it.cynomys.cfmandroid.repository.OfflineRepository
@@ -39,6 +41,9 @@ class SiloViewModel(private val context: Context) : ViewModel() {
     private val _selectedSilo = MutableStateFlow<Silo?>(null)
     val selectedSilo: StateFlow<Silo?> = _selectedSilo
 
+    // NEW: StateFlow to hold available silo licenses
+    private val _siloLicenses = MutableStateFlow<List<License>>(emptyList())
+    val siloLicenses: StateFlow<List<License>> = _siloLicenses.asStateFlow()
     /**
      * Fetches all silos for a given owner and farm.
      * It first tries to fetch from the network if online, then caches locally.
@@ -46,7 +51,42 @@ class SiloViewModel(private val context: Context) : ViewModel() {
      *
      * @param ownerId The UUID of the owner.
      * @param farmId The UUID of the farm.
+
      */
+
+
+
+
+    // New StateFlow to hold the list of available materials
+    private val _materials = MutableStateFlow<List<SiloMaterial>>(emptyList())
+    val materials: StateFlow<List<SiloMaterial>> = _materials.asStateFlow()
+
+    // Function to fetch the material list
+    fun fetchSiloMaterials() {
+        if (_materials.value.isNotEmpty()) return // Avoid re-fetching if already loaded
+
+        viewModelScope.launch {
+            try {
+                // Assuming NetworkService.get can handle deserialization of the list
+                val result = networkService.get<Array<SiloMaterial>>(
+                    path = "/api/silosMaterialList", responseType = Array<SiloMaterial>::class.java)
+                result.onSuccess {
+                    _materials.value = it.toList()
+                    _error.value = null
+                }.onFailure { e ->
+                    _error.value = "Failed to load materials: ${e.message}"
+                    Log.e("SiloViewModel", "Failed to load materials", e)
+                }
+            } catch (e: Exception) {
+                _error.value = "Failed to load materials: ${e.message}"
+                Log.e("SiloViewModel", "Exception loading materials", e)
+            }
+        }
+    }
+
+
+
+
     fun getSilos(ownerId: UUID, farmId: UUID) {
         viewModelScope.launch {
             _isLoading.value = true
@@ -350,6 +390,43 @@ class SiloViewModel(private val context: Context) : ViewModel() {
                 lastSyncTime = Date()
             )
             offlineRepository.insertFarmLocally(offlineFarm!!)
+        }
+    }
+
+
+
+
+
+    fun loadAvailableLicenses(ownerEmail: String) {
+        if (_siloLicenses.value.isNotEmpty()) return // Avoid re-fetching if already loaded
+
+        viewModelScope.launch {
+            _isLoading.value = true
+            _error.value = null
+            try {
+                // Assuming the API path to fetch contracts is similar to other entities
+                val result = networkService.get<Array<Contract>>(
+                    path = "api/contract/getAllContracts",
+                    responseType = Array<Contract>::class.java
+                )
+
+                if (result.isSuccess) {
+                    val contracts = result.getOrNull()?.toList() ?: emptyList()
+                    val allLicenses = contracts.flatMap { it.licenses }
+                    // Filter licenses for silo use (case-insensitive check)
+                    val siloLicenses = allLicenses.filter { it.type.lowercase() == "silo" }
+                    _siloLicenses.value = siloLicenses
+                    Log.e("List of silo licenses ",siloLicenses.toString())
+                } else {
+                    _error.value = result.exceptionOrNull()?.message ?: "Failed to load licenses."
+                    Log.e("SiloViewModel", "Failed to load licenses: ${result.exceptionOrNull()?.message}")
+                }
+            } catch (e: Exception) {
+                _error.value = "Exception loading licenses: ${e.message}"
+                Log.e("SiloViewModel", "Exception loading licenses", e)
+            } finally {
+                _isLoading.value = false
+            }
         }
     }
 }

@@ -14,19 +14,16 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -47,7 +44,8 @@ fun SiloListView(
     navController: NavController,
     onBack: () -> Unit,
     onAddSilo: (farmId: UUID, penId: UUID?) -> Unit, // penId now optional
-    onSiloSelected: (silo: Silo) -> Unit // Simpler callback for silo selection
+    onSiloSelected: (silo: Silo) -> Unit, // Callback for silo selection
+    onEditSilo: (silo: Silo) -> Unit // NEW: Callback for editing silo
 ) {
     // Collect the list of silos from the ViewModel
     val silos by viewModel.silos.collectAsState()
@@ -63,19 +61,6 @@ fun SiloListView(
     }
 
     Scaffold(
-
-        floatingActionButton = {
-            // Only show FAB if penId is available, meaning we are in a context where we can add to a specific pen
-            if (penId != null) {
-                FloatingActionButton(onClick = { onAddSilo(farmId, penId) }) {
-                    Icon(Icons.Default.Add, "Add new silo")
-                }
-            } else {
-                // Optionally, you could disable the FAB or show a message if penId is null
-                // Or if you want to allow adding silos without a specific pen, you'd need a different route
-                // For now, if penId is null, we assume adding directly to the farm without a pen is not allowed via this FAB
-            }
-        }
     ) { paddingValues ->
         Column(
             modifier = Modifier
@@ -100,8 +85,9 @@ fun SiloListView(
                         SiloItem(
                             silo = silo,
                             onItemClick = { onSiloSelected(silo) }, // Pass the whole silo object
+                            onEdit = { onEditSilo(silo) }, // NEW: Pass edit callback
                             onDelete = {
-                                if (silo.id != null && silo.farmId != null && silo.ownerId != null && silo.penId != null) {
+                                if (silo.id != null && silo.farmId != null && silo.ownerId != null) {
                                     viewModel.deleteSilo(silo.id, silo.farmId, silo.ownerId)
                                 } else {
                                     Log.e("SiloListView", "Cannot delete silo: missing required IDs for silo: ${silo.displayName}")
@@ -120,6 +106,7 @@ fun SiloListView(
 fun SiloItem(
     silo: Silo,
     onItemClick: () -> Unit,
+    onEdit: () -> Unit, // NEW: Edit callback
     onDelete: () -> Unit
 ) {
     Card(
@@ -130,6 +117,14 @@ fun SiloItem(
         Column(
             modifier = Modifier.padding(16.dp)
         ) {
+            // Silo Visual Representation
+            SiloVisualRepresentation(
+                silo = silo,
+                modifier = Modifier.align(Alignment.CenterHorizontally)
+            )
+
+            Spacer(modifier = Modifier.height(8.dp))
+
             // Display silo name and ID
             Text(text = silo.displayName, style = MaterialTheme.typography.titleLarge)
             Text(text = "ID: ${silo.silosID}")
@@ -143,14 +138,22 @@ fun SiloItem(
             }
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.End // Align delete button to the end
+                horizontalArrangement = Arrangement.End // Align buttons to the end
             ) {
-                // Delete button for each silo item
+                // NEW: Edit button
+                IconButton(onClick = onEdit) {
+                    Icon(
+                        imageVector = Icons.Default.Edit,
+                        contentDescription = "Edit",
+                        tint = MaterialTheme.colorScheme.primary
+                    )
+                }
+                // Delete button
                 IconButton(onClick = onDelete) {
                     Icon(
                         imageVector = Icons.Default.Delete,
                         contentDescription = "Delete",
-                        tint = MaterialTheme.colorScheme.error // Use error color for delete icon
+                        tint = MaterialTheme.colorScheme.error
                     )
                 }
             }

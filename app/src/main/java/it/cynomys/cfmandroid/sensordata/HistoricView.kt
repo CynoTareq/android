@@ -9,6 +9,8 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.FilterList
+import androidx.compose.material.icons.filled.InsertChart
+import androidx.compose.material.icons.filled.TableChart
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -32,6 +34,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import it.cynomys.cfmandroid.view.common.SensorChart
@@ -45,6 +48,7 @@ fun HistoricView(
     sensorNames: List<String>,
     viewModel: SensorDataViewModel = viewModel()
 ) {
+    val context = LocalContext.current
     var showSheet by remember { mutableStateOf(false) }
     var selectedSensors by remember { mutableStateOf(sensorNames.toSet()) }
     var attributes by remember { mutableStateOf(sensorNames.joinToString(",")) }
@@ -67,8 +71,9 @@ fun HistoricView(
     val intervalOptions = listOf("1 hour", "2 hours", "1 day", "7 days")
     val limitOptions = listOf(100, 500, 1000, 5000, 10000, 20000, 50000)
 
-    // Function to fetch historic data (moved before LaunchedEffect and wrapped in remember)
-    val fetchHistoricData: () -> Unit = remember { //
+    var showChart by remember { mutableStateOf(true) }
+
+    val fetchHistoricData: () -> Unit = remember {
         {
             val startTime = from.time
             val endTime = to.time
@@ -88,7 +93,7 @@ fun HistoricView(
                 endTime = endTime
             ) { result ->
                 isLoading = false
-                result.fold( //
+                result.fold(
                     onSuccess = { sensorData ->
                         historicData = sensorData
                     },
@@ -113,6 +118,12 @@ fun HistoricView(
                     IconButton(onClick = { showSheet = true }) {
                         Icon(Icons.Default.FilterList, contentDescription = "Filter")
                     }
+                    IconButton(onClick = { showChart = !showChart }) {
+                        Icon(
+                            imageVector = if (showChart) Icons.Default.TableChart else Icons.Filled.InsertChart,
+                            contentDescription = "Toggle View"
+                        )
+                    }
                 }
             )
         }
@@ -124,9 +135,7 @@ fun HistoricView(
         ) {
             when {
                 isLoading -> {
-                    CircularProgressIndicator(
-                        modifier = Modifier.align(Alignment.Center)
-                    )
+                    CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
                 }
 
                 errorMessage != null -> {
@@ -145,18 +154,22 @@ fun HistoricView(
                 }
 
                 else -> {
-                    LazyColumn(
-                        modifier = Modifier.fillMaxSize(),
-                        contentPadding = PaddingValues(16.dp),
-                        verticalArrangement = Arrangement.spacedBy(16.dp)
-                    ) {
-                        items(
-                            items = historicData!!.data.filterKeys { selectedSensors.contains(it) }
-                                .toList(),
-                            key = { (sensorName, _) -> sensorName }
-                        ) { (sensorName, values) ->
-                            SensorChart(sensorName, values, from, to)
+                    if (showChart) {
+                        LazyColumn(
+                            modifier = Modifier.fillMaxSize(),
+                            contentPadding = PaddingValues(16.dp),
+                            verticalArrangement = Arrangement.spacedBy(16.dp)
+                        ) {
+                            items(
+                                items = historicData!!.data.filterKeys { selectedSensors.contains(it) }
+                                    .toList(),
+                                key = { (sensorName, _) -> sensorName }
+                            ) { (sensorName, values) ->
+                                SensorChart(sensorName, values, from, to)
+                            }
                         }
+                    } else {
+                        SensorDataTable(historicData!!, selectedSensors)
                     }
                 }
             }

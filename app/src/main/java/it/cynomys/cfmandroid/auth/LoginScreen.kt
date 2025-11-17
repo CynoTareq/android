@@ -18,6 +18,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -116,5 +117,11 @@ fun LoginScreen(viewModel: AuthViewModel, navController: NavController) { // Add
                 modifier = Modifier.padding(top = 16.dp)
             )
         }
+        Spacer(modifier = Modifier.height(16.dp))
+        TextButton(onClick = {
+            navController.navigate("signup")
+        }
+        ) { Text("Don't have an account? Signup")}
+
     }
 }

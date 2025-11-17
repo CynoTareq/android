@@ -11,6 +11,7 @@ import it.cynomys.cfmandroid.database.OfflineOwner
 import it.cynomys.cfmandroid.database.OfflineSensorData
 import it.cynomys.cfmandroid.database.OfflineSilo // THIS IS THE CORRECT IMPORT FOR THE @Entity
 import it.cynomys.cfmandroid.device.Device
+import it.cynomys.cfmandroid.device.toLicenseInfoOrNull
 import it.cynomys.cfmandroid.farm.Farm
 import it.cynomys.cfmandroid.silo.Silo // This is your domain model Silo
 import it.cynomys.cfmandroid.silo.SiloModel
@@ -161,6 +162,7 @@ class OfflineRepository(private val context: Context) {
  * based on your OfflineDevice entity.
  */
 fun it.cynomys.cfmandroid.device.Device.toOfflineDevice(ownerId: UUID, farmId: UUID, penId: UUID): OfflineDevice {
+    val licenseInfo = licenseId.toLicenseInfoOrNull()
     return OfflineDevice(
         id = this.id,
         ownerId = ownerId,
@@ -170,28 +172,37 @@ fun it.cynomys.cfmandroid.device.Device.toOfflineDevice(ownerId: UUID, farmId: U
         displayName = this.displayName,
         predictions = this.predictions,
         indexes = this.indexes,
-        lastSyncTime = Date() // Set current sync time
+        license = this.license,
+        licenseId = licenseInfo?.id ,
+        shouldNotify = this.shouldNotify,
+        lastSyncTime = Date()
     )
 }
 
 fun OfflineDevice.toDevice(): it.cynomys.cfmandroid.device.Device {
+
     return it.cynomys.cfmandroid.device.Device(
+
         id = this.id,
         deviceID = this.deviceID,
         displayName = this.displayName,
         predictions = this.predictions,
         indexes = this.indexes,
+        license = this.license,
+        licenseId = null,
+        shouldNotify = this.shouldNotify,
         ownerId = this.ownerId,
         farmId = this.farmId,
         penId = this.penId
     )
 }
 
-// Extension function to convert Farm to OfflineFarm
-fun Farm.toOfflineFarm(): OfflineFarm {
+fun Farm.toOfflineFarm(ownerId: UUID): OfflineFarm {
     return OfflineFarm(
-        id = this.id ?: UUID.randomUUID(), // Provide a default if id is nullable
-        ownerId = this.ownerId,
+        id = requireNotNull(this.id) {
+            "Backend returned Farm without id"
+        },
+        ownerId = ownerId, // ✅ ALWAYS injected
         name = this.name,
         address = this.address,
         coordinateX = this.coordinateX,
@@ -201,6 +212,7 @@ fun Farm.toOfflineFarm(): OfflineFarm {
         lastSyncTime = Date()
     )
 }
+
 
 // Extension function to convert OfflineFarm to Farm
 fun OfflineFarm.toFarm(): Farm {
@@ -218,7 +230,7 @@ fun OfflineFarm.toFarm(): Farm {
 
 // Extension function to convert Silo to OfflineSilo
 // This function takes it.cynomys.cfmandroid.silo.Silo and returns it.cynomys.cfmandroid.database.OfflineSilo
-fun Silo.toOfflineSilo(ownerId: UUID, farmId: UUID, penId: UUID): it.cynomys.cfmandroid.database.OfflineSilo {
+fun Silo.toOfflineSilo(ownerId: UUID, farmId: UUID, penId: UUID?): it.cynomys.cfmandroid.database.OfflineSilo {
     return it.cynomys.cfmandroid.database.OfflineSilo( // Explicitly specify the package for OfflineSilo
         id = this.id ?: UUID.randomUUID(),
         farmId = farmId,
@@ -247,6 +259,11 @@ fun it.cynomys.cfmandroid.database.OfflineSilo.toSilo(): Silo {
         model = SiloModel("", ""), // Placeholder
         material_name = "", // Placeholder
         material_density = 0.0,
-        lastSyncTime = Date()
+        license = null, // Added: license
+        licenseId = null, // Added: licenseId
+        indexes = null, // Added: indexes
+        shouldNotify = false, // Added: shouldNotify with default false
+        predictions = false, // Added: predictions with default false
+        lastSyncTime = this.lastSyncTime
     )
 }

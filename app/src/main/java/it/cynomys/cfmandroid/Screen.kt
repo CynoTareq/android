@@ -1,7 +1,9 @@
 package it.cynomys.cfmandroid
 
 sealed class Screen(val route: String) {
+    object LanguageSelection : Screen("language_selection")
     object Login : Screen("login")
+    object Signup : Screen("signup")
     object Success : Screen("success")
     object FarmList : Screen("farm_list")
     object FarmDetail : Screen("farm_detail/{farmId}") {
@@ -25,6 +27,38 @@ sealed class Screen(val route: String) {
             }
         }
     }
+
+    // In Screen.kt, add the following:
+
+    // Silo screens - Detail
+    object SiloView : Screen("silo_detail/{siloId}/{farmId}/{ownerId}/{penId}") {
+        // Includes all four IDs in the path. penId is optional in the data model (Silo.kt).
+        fun createRoute(siloId: String, farmId: String, ownerId: String, penId: String?): String {
+            // Use "null" as a placeholder string if penId is null to ensure a complete path is passed.
+            return "silo_detail/$siloId/$farmId/$ownerId/${penId ?: "null"}"
+        }
+    }
+
+    // Silo screens - Edit
+    object SiloEdit : Screen("silo_edit/{siloId}/{farmId}/{ownerId}/{penId}") {
+        fun createRoute(siloId: String, farmId: String, ownerId: String, penId: String?): String {
+            return "silo_edit/$siloId/$farmId/$ownerId/${penId ?: "null"}"
+        }
+    }
+
+
+
+    // NEW: Silo screens - Add (MODIFIED to use penId as a required path parameter placeholder)
+    object SiloAdd : Screen("silo_add/{farmId}/{ownerId}/{penId}") { // <-- Route changed: back to path parameter
+        fun createRoute(farmId: String, ownerId: String, penId: String? = null): String {
+            // CRITICAL: Always provide a value for {penId} in the path, using "null" as placeholder
+            val penIdPlaceholder = penId ?: "null"
+            return "silo_add/$farmId/$ownerId/$penIdPlaceholder" // Example: silo_add/.../.../null
+        }
+    }
+
+
+
     object Webcams : Screen("farm_detail/{farmId}/webcams") {
         fun createRoute(farmId: String) = "farm_detail/$farmId/webcams"
     }

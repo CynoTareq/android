@@ -4,7 +4,7 @@ package it.cynomys.cfmandroid.farm
 import java.util.UUID
 
 enum class Species {
-    RUMINANT, SWINE, POULTRY, EQUINE, OTHER
+    RUMINANT, SWINE, POULTRY, OTHER
 }
 
 data class Farm(
@@ -25,7 +25,8 @@ data class FarmDto(
     val coordinateY: Double,
     val address: String,
     val area: Double,
-    val species: Species
+    val species: Species,
+    val ownerId: UUID
 )
 fun Farm.toFarmDto(): FarmDto {
     return FarmDto(
@@ -35,7 +36,8 @@ fun Farm.toFarmDto(): FarmDto {
         coordinateY = this.coordinateY,
         address = this.address,
         area = this.area,
-        species = this.species
+        species = this.species,
+        ownerId = this.ownerId
         // The ownerId field is part of Farm but is excluded from FarmDto,
         // so it is correctly not mapped here.
     )

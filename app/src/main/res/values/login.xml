@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="access1">Access your</string>
+    <string name="access2">Farm</string>
+    <string name="add_new">Add your new password</string>
+    <string name="change_password">Change password</string>
+    <string name="enter">Enter your login code</string>
+    <string name="enter_code">Enter your code</string>
+    <string name="forgot">Forgot password?</string>
+    <string name="insert">Insert your new password</string>
+    <string name="invalid">Invalid credentials</string>
+    <string name="invalid_login_code">Invalid login code</string>
+    <string name="invalid_verify_code">Invalid verify code</string>
+    <string name="login">Log In</string>
+    <string name="login_code">Check the login code in your email</string>
+    <string name="manage">Measure Analyze Improve Communicate</string>
+    <string name="new_password">New password</string>
+    <string name="new_to_us">New to us?</string>
+    <string name="password_changed">Password changed succesfully</string>
+    <string name="recover_code">Check the recover code in your email</string>
+    <string name="signup">Sign Up</string>
+    <string name="success">Login successful</string>
+    <string name="verify">Verify Code</string>
+</resources>

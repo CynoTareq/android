@@ -70,22 +70,22 @@ class CameraViewModel : ViewModel() {
         }
     }
 
-    fun updateCamera(cameraId: UUID, cameraDto: CameraDto) {
+    fun updateCamera(cameraEditDto: CameraEditDto) {
         viewModelScope.launch {
             _isLoading.value = true
             _error.value = null
 
             try {
-                val result = networkService.put<CameraDto, Camera>(
+                val result = networkService.put<CameraEditDto, Camera>(
                     path = "api/cameras/edit",
-                    body = cameraDto,
+                    body = cameraEditDto,
                     responseType = Camera::class.java
                 )
 
                 if (result.isSuccess) {
                     // Update the local state
                     _cameras.value = _cameras.value.map {
-                        if (it.id == cameraId) result.getOrNull() ?: it else it
+                        if (it.id == cameraEditDto.id) result.getOrNull() ?: it else it
                     }
                 } else {
                     _error.value = result.exceptionOrNull()?.message ?: "Failed to update camera"
