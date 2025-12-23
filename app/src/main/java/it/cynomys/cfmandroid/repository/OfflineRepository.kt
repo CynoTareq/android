@@ -4,6 +4,7 @@ package it.cynomys.cfmandroid.repository
 import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
+import androidx.room.withTransaction
 import it.cynomys.cfmandroid.database.OfflineDatabase
 import it.cynomys.cfmandroid.database.OfflineDevice
 import it.cynomys.cfmandroid.database.OfflineFarm
@@ -111,6 +112,18 @@ class OfflineRepository(private val context: Context) {
     suspend fun insertFarmLocally(farm: OfflineFarm) {
         farmDao.insertFarm(farm)
     }
+    suspend fun replaceFarmsForOwner(
+        ownerId: UUID,
+        farms: List<Farm>
+    ) {
+        database.withTransaction {
+            farmDao.deleteFarmsByOwner(ownerId)
+            farmDao.insertFarms(
+                farms.map { it.toOfflineFarm(ownerId) }
+            )
+        }
+    }
+
 
     suspend fun insertFarmsLocally(farms: List<OfflineFarm>) {
         farmDao.insertFarms(farms)
@@ -267,3 +280,4 @@ fun it.cynomys.cfmandroid.database.OfflineSilo.toSilo(): Silo {
         lastSyncTime = this.lastSyncTime
     )
 }
+

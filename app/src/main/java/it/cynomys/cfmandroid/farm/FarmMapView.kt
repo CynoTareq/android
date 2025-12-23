@@ -185,7 +185,7 @@ fun MapView.fitBoundsToFarms(farms: List<Farm>) {
 
     // Fit map to bounding box with padding (100px padding)
     post {
-        zoomToBoundingBox(boundingBox, true, 100)
+        zoomToBoundingBox(boundingBox, false, 100)
     }
 }
 

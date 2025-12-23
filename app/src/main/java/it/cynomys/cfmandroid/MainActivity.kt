@@ -1,15 +1,10 @@
 package it.cynomys.cfmandroid
 
-import android.app.Activity
-import android.content.Context
-import android.content.ContextWrapper
-import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -60,7 +55,6 @@ import it.cynomys.cfmandroid.profile.ProfileScreen
 import it.cynomys.cfmandroid.profile.ProfileViewModel
 import it.cynomys.cfmandroid.sensordata.SensorDataViewModel
 import it.cynomys.cfmandroid.sensordata.SensorDataViewModelFactory
-import it.cynomys.cfmandroid.silo.SiloView
 import it.cynomys.cfmandroid.silo.SiloFormView
 import it.cynomys.cfmandroid.silo.SiloView
 import it.cynomys.cfmandroid.silo.SiloViewModel

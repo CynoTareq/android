@@ -55,7 +55,7 @@ fun FarmListScreen(
     var selectedTabIndex by remember { mutableIntStateOf(0) }
 
     LaunchedEffect(ownerId) {
-        viewModel.getFarms(ownerId)
+        viewModel.refreshFarms(ownerId)
     }
 
     Scaffold(

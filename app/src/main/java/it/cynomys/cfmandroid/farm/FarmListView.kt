@@ -19,7 +19,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import java.util.UUID
-
 @Composable
 fun FarmListView(
     farms: List<Farm>,
@@ -28,45 +27,68 @@ fun FarmListView(
     onEdit: (Farm) -> Unit,
     onDelete: (Farm) -> Unit
 ) {
-    if (farms.isEmpty() && !isLoading) {
-        Box(
-            modifier = Modifier.fillMaxSize(),
-            contentAlignment = Alignment.Center
-        ) {
-            Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                Icon(
-                    imageVector = Icons.Default.Home,
-                    contentDescription = "No Farms",
-                    modifier = Modifier.size(64.dp),
-                    tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
+    when {
+        farms.isEmpty() && !isLoading -> {
+            EmptyFarmState()
+        }
+
+        else -> {
+            LazyColumn(
+                modifier = Modifier.fillMaxSize(),
+                contentPadding = PaddingValues(
+                    start = 8.dp,
+                    top = 8.dp,
+                    end = 8.dp,
+                    bottom = 96.dp
                 )
-                Spacer(modifier = Modifier.height(16.dp))
-                Text(
-                    text = "No farms found\nAdd your first farm!",
-                    textAlign = TextAlign.Center,
-                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
-                )
+            ) {
+                items(
+                    items = farms,
+                    key = { it.id!! } // 🔑 IMPORTANT for delete animations & correctness
+                ) { farm ->
+                    FarmItem(
+                        farm = farm,
+                        onClick = { onFarmSelected(farm.id!!) },
+                        onEdit = { onEdit(farm) },
+                        onDelete = { onDelete(farm) }
+                    )
+
+                    Spacer(modifier = Modifier.height(8.dp))
+                }
             }
         }
-    } else {
-        LazyColumn(
-            modifier = Modifier.fillMaxSize(),
-            contentPadding = PaddingValues(
-                start = 8.dp,
-                top = 8.dp,
-                end = 8.dp,
-                bottom = 96.dp
-            )
+    }
+}
+@Composable
+private fun EmptyFarmState() {
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            items(farms) { farm ->
-                FarmItem(
-                    farm = farm,
-                    onClick = { onFarmSelected(farm.id!!) },
-                    onEdit = { onEdit(farm) },
-                    onDelete = { onDelete(farm) }
-                )
-                Spacer(modifier = Modifier.height(8.dp))
-            }
+            Icon(
+                imageVector = Icons.Default.Home,
+                contentDescription = null,
+                modifier = Modifier.size(64.dp),
+                tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            Text(
+                text = "No farms found",
+                style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.onSurface
+            )
+
+            Text(
+                text = "Pull down to refresh or add your first farm",
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
+                textAlign = TextAlign.Center
+            )
         }
     }
 }

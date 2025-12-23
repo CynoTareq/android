@@ -79,6 +79,9 @@ interface FarmDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertFarms(farms: List<OfflineFarm>)
 
+    @Query("DELETE FROM offline_farms WHERE ownerId = :ownerId")
+    suspend fun deleteFarmsByOwner(ownerId: UUID)
+
     @Update
     suspend fun updateFarm(farm: OfflineFarm)
 
