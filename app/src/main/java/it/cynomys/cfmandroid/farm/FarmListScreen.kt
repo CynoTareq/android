@@ -33,7 +33,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import it.cynomys.cfmandroid.R
 import androidx.navigation.NavController
 import java.util.UUID
 
@@ -77,9 +80,10 @@ fun FarmListScreen(
         topBar = {
             Column {
                 TopAppBar(
+
                     title = {
                         Text(
-                            "My Farms",
+                            stringResource(R.string.my_farms),
                             color = MaterialTheme.colorScheme.onPrimaryContainer
                         )
                     },

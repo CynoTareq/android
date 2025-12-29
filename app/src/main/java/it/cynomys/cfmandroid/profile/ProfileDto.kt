@@ -6,6 +6,7 @@ import it.cynomys.cfmandroid.auth.Settings
 import it.cynomys.cfmandroid.auth.UUIDSerializer
 import kotlinx.serialization.Serializable
 import java.util.Date
+import java.util.Locale
 import java.util.UUID
 
 @Serializable
@@ -50,7 +51,7 @@ fun ProfileDto.toOwner(): Owner {
         password = password,
         birthday = birthday,
         settings = Settings(
-            language = language ?: "en",
+            language = language ?: Locale.getDefault().language,
             currency = currency ?: "USD",
             unit = unit ?: "metric",
             hasAverage = hasAverage
@@ -88,7 +89,7 @@ fun ProfileUpdateDto.toOwner(existingOwner: Owner): Owner {
             unit = unit ?: existingOwner.settings.unit,
             hasAverage = hasAverage
         ) ?: Settings(
-            language = language ?: "en",
+            language = language ?: existingOwner.settings?.language ?: "",
             currency = currency ?: "USD",
             unit = unit ?: "metric",
             hasAverage = hasAverage

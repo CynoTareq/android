@@ -1,5 +1,7 @@
 package it.cynomys.cfmandroid
 
+import android.content.Context
+import android.content.res.Configuration
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
@@ -13,6 +15,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -66,6 +69,7 @@ import it.cynomys.cfmandroid.weather.WeatherScreen
 import it.cynomys.cfmandroid.weather.WeatherViewModel
 import java.net.URLDecoder
 import java.nio.charset.StandardCharsets
+import java.util.Locale
 import java.util.UUID
 
 class MainActivity : ComponentActivity() {
@@ -73,6 +77,19 @@ class MainActivity : ComponentActivity() {
     private lateinit var authViewModel: AuthViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
+
+        val prefs = getSharedPreferences("auth_prefs", MODE_PRIVATE)
+        val languageCode = prefs.getString("language", null)
+
+        if (!languageCode.isNullOrBlank()) {
+            AppCompatDelegate.setApplicationLocales(
+                LocaleListCompat.forLanguageTags(languageCode)
+            )
+        }
+
+
+
+
         super.onCreate(savedInstanceState)
 
         authViewModel = ViewModelProvider(
@@ -85,7 +102,10 @@ class MainActivity : ComponentActivity() {
                 val navController = rememberNavController()
 
                 val userSession by authViewModel.userSession.collectAsState()
+
                 val isSessionRestored by authViewModel.isSessionRestored.collectAsState()
+                //ApplyOwnerLanguage(userSession)
+
                 val isLoggedIn = userSession != null
 
                 val farmViewModel: FarmViewModel = viewModel(
@@ -773,13 +793,17 @@ class MainActivity : ComponentActivity() {
             }
         }}
 
-    fun setAppLocale(localeCode:String){
-        val locals = LocaleListCompat.forLanguageTags(localeCode)
-        AppCompatDelegate.setApplicationLocales(locals)
-    }
-
         override fun onResume() {
             super.onResume()
             authViewModel.validateSession()
         }
+
+
+    override fun attachBaseContext(newBase: Context) {
+        super.attachBaseContext(LocaleManager.wrapContext(newBase))
     }
+
+
+}
+
+

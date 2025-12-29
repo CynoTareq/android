@@ -40,7 +40,9 @@ class ProfileViewModel : ViewModel() {
 
                 result.fold(
                     onSuccess = { dto ->
-                        _owner.value = dto.toOwner()
+                        val owner = dto.toOwner()
+                        _owner.value = owner
+
                         Log.d("ProfileViewModel", "Owner settings fetched successfully for ${dto.email}")
                     },
                     onFailure = { throwable ->

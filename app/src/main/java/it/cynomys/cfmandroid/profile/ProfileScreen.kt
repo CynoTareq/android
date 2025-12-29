@@ -1,5 +1,6 @@
 package it.cynomys.cfmandroid.profile
 
+import android.app.Activity
 import android.app.DatePickerDialog
 import android.util.Log
 import android.widget.DatePicker
@@ -56,6 +57,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import it.cynomys.cfmandroid.LocaleManager
 import it.cynomys.cfmandroid.auth.AuthViewModel
 import it.cynomys.cfmandroid.auth.Settings
 import java.text.SimpleDateFormat
@@ -107,6 +109,8 @@ fun ProfileScreen(
     val isError by profileViewModel.isError.collectAsState()
     // ADDED: Observe user session state to navigate after logout
     val userSession by authViewModel.userSession.collectAsState()
+    val updateSuccess by profileViewModel.updateSuccess.collectAsState()
+
 
     var isEditMode by remember { mutableStateOf(false) }
 
@@ -138,7 +142,25 @@ fun ProfileScreen(
             onNavigateBack()
         }
     }
+    LaunchedEffect(updateSuccess) {
+        if (updateSuccess) {
+            owner?.let { updatedOwner ->
+                authViewModel.updateSessionOwner(updatedOwner)
+            }
+            profileViewModel.clearUpdateSuccess()
+        }
+    }
 
+    LaunchedEffect(owner?.settings?.language) {
+        owner?.settings?.language?.let { lang ->
+            LocaleManager.saveLanguage(context, lang)
+
+            // Only recreate if locale is different
+            if (Locale.getDefault().language != lang) {
+                (context as Activity).recreate()
+            }
+        }
+    }
     // Update UI states when owner data changes
     LaunchedEffect(owner) {
         owner?.let { ownerData ->
@@ -185,6 +207,8 @@ fun ProfileScreen(
 
         profileViewModel.updateOwnerSettings(ownerId, updatedOwner)
         isEditMode = false
+
+
     }
 
     // ADDED: Logout function
@@ -376,6 +400,7 @@ fun ProfileScreen(
                                             onClick = {
                                                 language = option.value
                                                 languageExpanded = false
+
                                             }
                                         )
                                     }

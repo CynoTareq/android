@@ -227,4 +227,32 @@ class AuthViewModel(private val context: Context? = null) : ViewModel() {
             }
         }
     }
+
+
+
+    fun updateLanguage(languageCode: String) {
+        val updatedOwner = _userSession.value?.copy(
+            settings = _userSession.value?.settings?.copy(
+                language = languageCode
+            )
+        )
+
+        _userSession.value = updatedOwner
+        saveUserSession(updatedOwner)
+    }
+
+
+    fun updateSessionOwner(updatedOwner: Owner) {
+        val currentOwner = _userSession.value
+
+        val safeOwner = updatedOwner.copy(
+            id = updatedOwner.id ?: currentOwner?.id
+        )
+
+        _userSession.value = safeOwner
+        saveUserSession(safeOwner)
+    }
+
+
+
 }

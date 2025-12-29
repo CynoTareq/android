@@ -337,7 +337,7 @@ fun SignupScreen(viewModel: AuthViewModel, navController: NavController) {
                         onClick = {
                             selectedLanguage = option
                             languageExpanded = false
-                            activity?.setAppLocale(option.value)
+
 
                         }
                     )
