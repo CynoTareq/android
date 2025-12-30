@@ -14,7 +14,7 @@ import androidx.room.TypeConverters
         OfflineOwner::class,
         OfflineSilo::class
     ],
-    version = 1,
+    version = 2,
     exportSchema = false
 )
 @TypeConverters(DatabaseConverters::class)
