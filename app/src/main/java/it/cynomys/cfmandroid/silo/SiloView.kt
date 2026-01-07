@@ -93,14 +93,33 @@ fun SiloView(
             Box(modifier = Modifier.fillMaxSize()) {
                 when (selectedTab) {
                     0 -> deviceDetails?.let { silo ->
-                        LatestView(
-                            deviceID = silo.silosID, // Use the hardware serial number
-                            farmId = farmId,
-                            viewModel = sensorDataViewModel,
-                            authViewModel = authViewModel,
-                            type = "SILO"
+
+                        val distance =
+                            sensorDataState["Distance1"] as? Double ?: 0.0
+
+                        val level = calculateLevel(
+                            distance = distance,
+                            siloHeight = silo.silosHeight
                         )
-                    } ?: LoadingState()
+
+                        Column {
+                            SiloVisualRepresentation(
+                                silo = silo,
+                                fillPercentage = level
+                            )
+
+                            Text(text = "Level: ${level.toInt()}%")
+
+                            LatestView(
+                                deviceID = silo.silosID,
+                                farmId = farmId,
+                                viewModel = sensorDataViewModel,
+                                authViewModel = authViewModel,
+                                type = "SILO"
+                            )
+                        }
+                    }
+                        ?: LoadingState()
 
                     // Tab 1: Historic (Wait for details to get sensor names)
                     1 -> deviceDetails?.let { silo ->
@@ -135,4 +154,14 @@ fun LoadingState() {
                 .padding(top = 64.dp)
         )
     }
+}
+
+fun calculateLevel(
+    distance: Double,
+    siloHeight: Double
+): Float {
+    val filledHeight = (siloHeight - distance)
+        .coerceIn(0.0, siloHeight)
+
+    return ((filledHeight / siloHeight) * 100).toFloat()
 }

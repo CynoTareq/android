@@ -1,5 +1,7 @@
 package it.cynomys.cfmandroid.silo
 
+import android.R.attr.startX
+import android.health.connect.datatypes.units.Percentage
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.aspectRatio
@@ -17,6 +19,7 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun SiloVisualRepresentation(
     silo: Silo,
+    fillPercentage: Float,
     modifier: Modifier = Modifier
 ) {
     // Clean, simple colors
@@ -38,12 +41,27 @@ fun SiloVisualRepresentation(
             val siloBodyWidth = totalWidth * 0.5f
             val roofHeight = totalHeight * 0.15f
             val siloBodyHeight = totalHeight * 0.55f
+            val fillHeight = siloBodyHeight * (fillPercentage / 100f)
+
+
 
             val startX = (totalWidth - siloBodyWidth) / 2f
             val endX = startX + siloBodyWidth
             val centerX = (startX + endX) / 2f
             val bodyTopY = roofHeight
             val bodyBottomY = bodyTopY + siloBodyHeight
+            drawRect(
+                color = Color(0xFF4CAF50),
+                topLeft = Offset(
+                    startX,
+                    bodyBottomY - fillHeight
+                ),
+                size = Size(
+                    siloBodyWidth,
+                    fillHeight
+                )
+            )
+
 
             // === CYLINDRICAL BODY ===
             drawRect(

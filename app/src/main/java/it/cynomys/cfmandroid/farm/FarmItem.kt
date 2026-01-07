@@ -32,7 +32,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import it.cynomys.cfmandroid.R
 
 @Composable
 fun FarmItem(
@@ -41,6 +43,13 @@ fun FarmItem(
     onEdit: () -> Unit,
     onDelete: () -> Unit
 ) {
+    // Create a localized string for the species
+    val speciesLabel = when (farm.species) {
+        Species.POULTRY -> stringResource(R.string.farm_poultry)
+        Species.RUMINANT -> stringResource(R.string.farm_ruminant)
+        Species.SWINE -> stringResource(R.string.farm_swine)
+        else -> farm.species.toString() // Fallback
+    }
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -94,7 +103,7 @@ fun FarmItem(
                     //Species.EQUINE -> Icons.Default.Pets
                     else -> Icons.Default.Grass
                 },
-                text = farm.species.toString()
+                text = speciesLabel
             )
 
             Spacer(modifier = Modifier.height(16.dp))

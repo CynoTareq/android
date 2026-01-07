@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="farm_poultry">POLLAME</string>
+    <string name="farm_ruminant">RUMINANTI</string>
+    <string name="farm_swine">SUINI</string>
+</resources>

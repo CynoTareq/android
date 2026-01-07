@@ -117,9 +117,11 @@ fun SiloItem(
         Column(
             modifier = Modifier.padding(16.dp)
         ) {
+
             // Silo Visual Representation
             SiloVisualRepresentation(
                 silo = silo,
+                fillPercentage = 0f,
                 modifier = Modifier.align(Alignment.CenterHorizontally)
             )
 

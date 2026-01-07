@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="farm_poultry">AVES DE CORRAL</string>
+    <string name="farm_ruminant">RUMIANTES</string>
+    <string name="farm_swine">CERDOS</string>
+</resources>
