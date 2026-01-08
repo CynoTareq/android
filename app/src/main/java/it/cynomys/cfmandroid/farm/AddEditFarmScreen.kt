@@ -174,7 +174,18 @@ fun AddEditFarmScreen(
         // -------- Area (optional) --------
         OutlinedTextField(
             value = area,
-            onValueChange = { area = it },
+           // onValueChange = { area = it.trim().replace(" ","") },
+            onValueChange = {
+                input ->
+                val cleaned = input.replace("\\s".toRegex(),"")
+                    .filter { it.isDigit() || it == '.' }
+                if(cleaned.count{
+                    it == '.'
+                    } <= 1 ){
+                    area = cleaned
+
+                }
+            },
             label = { Text("Area (ha)") },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
             modifier = Modifier.fillMaxWidth()
