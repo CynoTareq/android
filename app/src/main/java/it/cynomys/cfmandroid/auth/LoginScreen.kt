@@ -70,7 +70,7 @@ fun LoginScreen(viewModel: AuthViewModel, navController: NavController) { // Add
 
         OutlinedTextField(
             value = email,
-            onValueChange = { email = it },
+            onValueChange = { email = it.trim().replace(" ","") },
             label = { Text("Email") },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
             modifier = Modifier.fillMaxWidth()
@@ -80,7 +80,7 @@ fun LoginScreen(viewModel: AuthViewModel, navController: NavController) { // Add
 
         OutlinedTextField(
             value = password,
-            onValueChange = { password = it },
+            onValueChange = { password = it.trim().replace(" ","") },
             label = { Text("Password") },
             visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
