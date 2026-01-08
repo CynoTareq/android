@@ -125,24 +125,22 @@ fun SiloItem(
             modifier = Modifier.padding(16.dp)
         ) {
 
-            // Silo Visual Representation
             SiloVisualRepresentation(
                 silo = silo,
                 fillPercentage = fillPercentage,
                 modifier = Modifier.align(Alignment.CenterHorizontally)
             )
 
-            Spacer(modifier = Modifier.height(8.dp))
             Text(
                 text = "Level: ${fillPercentage.toInt()}%",
-                style = MaterialTheme.typography.bodyMedium
+                style = MaterialTheme.typography.bodyMedium,
+                modifier = Modifier.align(Alignment.CenterHorizontally)
             )
+
             Log.d("SiloListView","${silo.toString()}")
             // Display silo name and ID
             Text(text = silo.displayName, style = MaterialTheme.typography.titleLarge)
-            Text(text = "ID: ${silo.silosID}")
-            // Display silo height and diameter
-            Text(text = "Height: ${silo.silosHeight} units, Diameter: ${silo.silosDiameter} units")
+            Text(text = "Height: ${silo.silosHeight} cm, Diameter: ${silo.silosDiameter} cm")
             // Display silo shape and material
             Text(text = "Shape: ${silo.shape.name}, Material: ${silo.material_name}")
             // Display Pen ID if available

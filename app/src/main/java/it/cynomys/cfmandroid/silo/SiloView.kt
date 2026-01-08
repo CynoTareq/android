@@ -94,31 +94,6 @@ fun SiloView(
                 when (selectedTab) {
                     0 -> deviceDetails?.let { silo ->
 
-                        Column(modifier = Modifier.padding(16.dp)) {
-
-                            val distance = sensorDataState["distance1"] as? Double
-
-                            if (distance != null) {
-                                val level = calculateLevel(
-                                    distance = distance,
-                                    siloHeight = silo.silosHeight
-                                )
-
-                                SiloVisualRepresentation(
-                                    silo = silo,
-                                    fillPercentage = level
-                                )
-
-                                Text(
-                                    text = "Level: ${level.toInt()}%",
-                                    modifier = Modifier.padding(vertical = 8.dp)
-                                )
-                            } else {
-                                Text(
-                                    text = "Waiting for level data…",
-                                    modifier = Modifier.padding(vertical = 8.dp)
-                                )
-                            }
 
                             // ✅ LatestView MUST be inside the Column
                             LatestView(
@@ -128,8 +103,7 @@ fun SiloView(
                                 authViewModel = authViewModel,
                                 type = "SILO"
                             )
-                        }
-                    } ?: LoadingState()
+                        } ?: LoadingState()
 
 
                     // Tab 1: Historic (Wait for details to get sensor names)

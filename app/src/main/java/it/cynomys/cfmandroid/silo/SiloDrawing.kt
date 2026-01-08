@@ -50,6 +50,17 @@ fun SiloVisualRepresentation(
             val centerX = (startX + endX) / 2f
             val bodyTopY = roofHeight
             val bodyBottomY = bodyTopY + siloBodyHeight
+
+
+
+            // === CYLINDRICAL BODY ===
+            drawRect(
+                color = siloColor,
+                topLeft = Offset(startX, bodyTopY),
+                size = Size(siloBodyWidth, siloBodyHeight)
+            )
+
+            // ✅ DRAW FILL ON TOP OF BODY
             drawRect(
                 color = Color(0xFF4CAF50),
                 topLeft = Offset(
@@ -60,14 +71,6 @@ fun SiloVisualRepresentation(
                     siloBodyWidth,
                     fillHeight
                 )
-            )
-
-
-            // === CYLINDRICAL BODY ===
-            drawRect(
-                color = siloColor,
-                topLeft = Offset(startX, bodyTopY),
-                size = Size(siloBodyWidth, siloBodyHeight)
             )
 
             // Simple horizontal bands

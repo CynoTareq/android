@@ -274,7 +274,7 @@ fun it.cynomys.cfmandroid.database.OfflineSilo.toSilo(): Silo {
         farmId = this.farmId,
         ownerId = null, // Placeholder
         model = SiloModel("", ""), // Placeholder
-        material_name = "", // Placeholder
+        material_name = this.material_name, // Placeholder
         material_density = 0.0,
         license = null, // Added: license
         licenseId = null, // Added: licenseId
