@@ -44,6 +44,11 @@ class SiloViewModel(private val context: Context) : ViewModel() {
     // NEW: StateFlow to hold available silo licenses
     private val _siloLicenses = MutableStateFlow<List<License>>(emptyList())
     val siloLicenses: StateFlow<List<License>> = _siloLicenses.asStateFlow()
+
+
+    private val _siloLevels = MutableStateFlow<Map<String, Float>>(emptyMap())
+    val siloLevels: StateFlow<Map<String, Float>> = _siloLevels
+
     /**
      * Fetches all silos for a given owner and farm.
      * It first tries to fetch from the network if online, then caches locally.
@@ -113,6 +118,7 @@ class SiloViewModel(private val context: Context) : ViewModel() {
                         }
                         offlineRepository.insertSilosLocally(offlineSilosToInsert)
                         _silos.value = offlineRepository.getSilosByFarmIdLocally(farmId).first()
+                        fetchSiloLevels(_silos.value)
                     } else {
                         // If network fetch fails, log error and try to load from local
                         _error.value = result.exceptionOrNull()?.message ?: "Failed to load silos from network"
@@ -429,4 +435,47 @@ class SiloViewModel(private val context: Context) : ViewModel() {
             }
         }
     }
+
+
+
+
+
+    private fun fetchSiloLevels(silos: List<Silo>) {
+        viewModelScope.launch {
+            val levels = mutableMapOf<String, Float>()
+
+            silos.forEach { silo ->
+                try {
+                    val result = networkService.get<Map<String, Any>>(
+                        path = "api/telemetry/latest/${silo.silosID}?isUICall=true",
+                        responseType = Map::class.java as Class<Map<String, Any>>
+                    )
+
+                    if (result.isSuccess) {
+                        val distance = (result.getOrNull()
+                            ?.get("distance1") as? List<*>)
+                            ?.firstOrNull()
+                            ?.let { it as? Map<*, *> }
+                            ?.get("value")
+                            ?.toString()
+                            ?.toDoubleOrNull()
+
+                        if (distance != null) {
+                            val level = calculateLevel(
+                                distance = distance,
+                                siloHeight = silo.silosHeight
+                            )
+                            levels[silo.silosID] = level
+                        }
+                    }
+                } catch (e: Exception) {
+                    Log.e("SiloViewModel", "Failed telemetry for ${silo.silosID}", e)
+                }
+            }
+
+            _siloLevels.value = levels
+        }
+    }
+
+
 }

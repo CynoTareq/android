@@ -1,5 +1,6 @@
 package it.cynomys.cfmandroid.silo
 
+import android.health.connect.datatypes.units.Percentage
 import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -51,12 +52,15 @@ fun SiloListView(
     val silos by viewModel.silos.collectAsState()
     val isLoading by viewModel.isLoading.collectAsState()
     val error by viewModel.error.collectAsState()
+    val siloLevels by viewModel.siloLevels.collectAsState()
+
+
 
     // Log for debugging
     LaunchedEffect(silos) {
-        Log.d("SiloListView", "Silos updated: ${silos.size} items for farmId: $farmId, penId: $penId")
+        Log.d("SiloListView", "Silos updated: ${silos.size} items for farmId: $farmId, penId: $penId  ")
         silos.forEach { silo ->
-            Log.d("SiloListView", "Silo: ${silo.displayName}, Pen ID: ${silo.penId}, Farm ID: ${silo.farmId}")
+            Log.d("SiloListView", "Silo: ${silo.displayName}, Pen ID: ${silo.penId}, Farm ID: ${silo.farmId} , Silo id ${silo.id}")
         }
     }
 
@@ -82,8 +86,10 @@ fun SiloListView(
                     contentPadding = PaddingValues(bottom = 64.dp) // Add padding for FAB
                 ) {
                     items(silos, key = { it.id ?: UUID.randomUUID() }) { silo ->
+                        val fillPercentage = siloLevels[silo.silosID] ?: 0f
                         SiloItem(
                             silo = silo,
+                            fillPercentage = fillPercentage,
                             onItemClick = { onSiloSelected(silo) }, // Pass the whole silo object
                             onEdit = { onEditSilo(silo) }, // NEW: Pass edit callback
                             onDelete = {
@@ -105,6 +111,7 @@ fun SiloListView(
 @Composable
 fun SiloItem(
     silo: Silo,
+    fillPercentage: Float,
     onItemClick: () -> Unit,
     onEdit: () -> Unit, // NEW: Edit callback
     onDelete: () -> Unit
@@ -121,12 +128,16 @@ fun SiloItem(
             // Silo Visual Representation
             SiloVisualRepresentation(
                 silo = silo,
-                fillPercentage = 0f,
+                fillPercentage = fillPercentage,
                 modifier = Modifier.align(Alignment.CenterHorizontally)
             )
 
             Spacer(modifier = Modifier.height(8.dp))
-
+            Text(
+                text = "Level: ${fillPercentage.toInt()}%",
+                style = MaterialTheme.typography.bodyMedium
+            )
+            Log.d("SiloListView","${silo.toString()}")
             // Display silo name and ID
             Text(text = silo.displayName, style = MaterialTheme.typography.titleLarge)
             Text(text = "ID: ${silo.silosID}")

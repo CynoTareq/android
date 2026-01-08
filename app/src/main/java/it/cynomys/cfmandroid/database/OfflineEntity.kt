@@ -106,9 +106,13 @@ data class OfflineSensorData(
 )
 data class OfflineSilo(
     @PrimaryKey val id: UUID,
+    val silosID: String,
     val farmId: UUID,
     val name: String,
+    val silosHeight: Double,
+    val silosDiameter: Double,
     val capacity: Double,
+    val material_name:String,
     val fillLevel: Double,
     val lastSyncTime: Date = Date()
 )

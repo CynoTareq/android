@@ -246,7 +246,11 @@ fun OfflineFarm.toFarm(): Farm {
 fun Silo.toOfflineSilo(ownerId: UUID, farmId: UUID, penId: UUID?): it.cynomys.cfmandroid.database.OfflineSilo {
     return it.cynomys.cfmandroid.database.OfflineSilo( // Explicitly specify the package for OfflineSilo
         id = this.id ?: UUID.randomUUID(),
+        silosID = this.silosID.toString(),
         farmId = farmId,
+        silosHeight = this.silosHeight,
+        silosDiameter = this.silosDiameter,
+        material_name = this.material_name,
         name = this.displayName, // Assuming displayName maps to name in OfflineSilo
         capacity = this.silosHeight * this.silosDiameter, // Placeholder conversion, adjust as needed
         fillLevel = 0.0, // Default fill level, adjust as needed
@@ -259,10 +263,10 @@ fun Silo.toOfflineSilo(ownerId: UUID, farmId: UUID, penId: UUID?): it.cynomys.cf
 fun it.cynomys.cfmandroid.database.OfflineSilo.toSilo(): Silo {
     return Silo(
         id = this.id,
-        silosID = this.id.toString(), // Assuming silosID is String and can be derived from UUID
+        silosID = this.silosID.toString(), // Assuming silosID is String and can be derived from UUID
         displayName = this.name,
-        silosHeight = this.capacity, // Placeholder, adjust based on your model
-        silosDiameter = 0.0, // Placeholder
+        silosHeight = this.silosHeight, // Placeholder, adjust based on your model
+        silosDiameter = this.silosDiameter, // Placeholder
         coneHeight = 0.0, // Placeholder
         bottomDiameter = 0.0, // Placeholder
         shape = SiloShape.FULL_CYLINDRICAL, // Placeholder, actual shape from DB if stored

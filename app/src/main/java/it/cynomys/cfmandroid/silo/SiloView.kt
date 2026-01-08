@@ -94,22 +94,33 @@ fun SiloView(
                 when (selectedTab) {
                     0 -> deviceDetails?.let { silo ->
 
-                        val distance =
-                            sensorDataState["Distance1"] as? Double ?: 0.0
+                        Column(modifier = Modifier.padding(16.dp)) {
 
-                        val level = calculateLevel(
-                            distance = distance,
-                            siloHeight = silo.silosHeight
-                        )
+                            val distance = sensorDataState["distance1"] as? Double
 
-                        Column {
-                            SiloVisualRepresentation(
-                                silo = silo,
-                                fillPercentage = level
-                            )
+                            if (distance != null) {
+                                val level = calculateLevel(
+                                    distance = distance,
+                                    siloHeight = silo.silosHeight
+                                )
 
-                            Text(text = "Level: ${level.toInt()}%")
+                                SiloVisualRepresentation(
+                                    silo = silo,
+                                    fillPercentage = level
+                                )
 
+                                Text(
+                                    text = "Level: ${level.toInt()}%",
+                                    modifier = Modifier.padding(vertical = 8.dp)
+                                )
+                            } else {
+                                Text(
+                                    text = "Waiting for level data…",
+                                    modifier = Modifier.padding(vertical = 8.dp)
+                                )
+                            }
+
+                            // ✅ LatestView MUST be inside the Column
                             LatestView(
                                 deviceID = silo.silosID,
                                 farmId = farmId,
@@ -118,8 +129,8 @@ fun SiloView(
                                 type = "SILO"
                             )
                         }
-                    }
-                        ?: LoadingState()
+                    } ?: LoadingState()
+
 
                     // Tab 1: Historic (Wait for details to get sensor names)
                     1 -> deviceDetails?.let { silo ->
@@ -156,12 +167,13 @@ fun LoadingState() {
     }
 }
 
-fun calculateLevel(
-    distance: Double,
-    siloHeight: Double
-): Float {
-    val filledHeight = (siloHeight - distance)
-        .coerceIn(0.0, siloHeight)
+fun calculateLevel(distance: Double, siloHeight: Double): Float {
+    if (siloHeight <= 0) return 0f
 
-    return ((filledHeight / siloHeight) * 100).toFloat()
+    val filled = siloHeight - distance
+    val percentage = (filled / siloHeight) * 100.0
+
+    return percentage
+        .coerceIn(0.0, 100.0)
+        .toFloat()
 }
