@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="fill_level_index">Fill Level Index</string>
+    <string name="water_infiltration_risk_index">Water Infiltration Risk Index</string>
+    <string name="aspergillus_risk_index">Aspergillus Risk Index</string>
+</resources>
