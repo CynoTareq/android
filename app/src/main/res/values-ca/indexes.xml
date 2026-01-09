@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="air_quality_index">Índex de qualitat de l\'aire per als treballadors (IQA)\n</string>
+    <string name="air_quality_status_placeholder">Qualitat òptima de l\'aire</string>
+    <string name="animal_welfare_index">Índex de benestar animal</string>
+    <string name="aspergillus_risk_index">Índex de risc d\'Aspergillus</string>
+    <string name="aspergillus_status_placeholder">S\'ha detectat un baix risc d\'aspergil·losi</string>
+    <string name="description">Els índexs són una manera de mesurar el rendiment dels mòduls ambientals. Es calculen a partir de les dades de telemetria rebudes dels mòduls ambientals.</string>
+    <string name="environmental_index">Índex d\'Impacte Ambiental\n</string>
+    <string name="feed_management">Índex d\'eficiència metabòlica</string>
+    <string name="feed_status_placeholder">Les pràctiques d\'alimentació són adequades</string>
+    <string name="fill_level_index">Índex de nivell d\'ompliment</string>
+    <string name="fill_level_status_placeholder">S\'ha detectat un nivell d\'ompliment alt</string>
+    <string name="external_air_quality_index">Índex de qualitat de l\'aire exterior</string>
+    <string name="external_temperature_humidity_index">THI extern</string>
+    <string name="gastrointestinal_index">Índex de risc de malalties gastrointestinals</string>
+    <string name="lighting_index">Índex d\'eficiència de l\'exposició a la llum</string>
+    <string name="lighting_status_placeholder">Condicions d\'il·luminació òptimes</string>
+    <string name="moreInfo"> Més informació sobre els índexs</string>
+    <string name="noAvailable">Encara no hi ha cap índex disponible.</string>
+    <string name="parameters">Paràmetres: </string>
+    <string name="productivity_index">Índex de productivitat</string>
+    <string name="respiratory_index">Índex de risc de malalties respiratòries</string>
+    <string name="respiratory_status_placeholder">Risc de problemes respiratoris</string>
+    <string name="stress_index">Índex d\'estrès animal</string>
+    <string name="stress_status_placeholder">S\'ha detectat un alt nivell d\'estrès</string>
+    <string name="temperature_humidity_index">Índex d\'estrès tèrmic (THI)</string>
+    <string name="ventilation_index">Índex d\'eficiència de ventilació</string>
+    <string name="ventilation_status_placeholder">Ventilació excessiva</string>
+    <string name="water_infiltration_risk_index">Índex de risc d\'infiltració d\'aigua</string>
+    <string name="water_infiltration_status_placeholder">S\'ha detectat un risc moderat d\'infiltració d\'aigua</string>
+</resources>

@@ -1,6 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="fill_level_index">Fill Level Index</string>
-    <string name="water_infiltration_risk_index">Water Infiltration Risk Index</string>
+    <string name="air_quality_index">Air Quality Index For Workers (AQI)\n</string>
+    <string name="air_quality_status_placeholder">Optimal air quality</string>
+    <string name="animal_welfare_index">Animal Welfare Index</string>
     <string name="aspergillus_risk_index">Aspergillus Risk Index</string>
+    <string name="aspergillus_status_placeholder">Low aspergillus risk detected</string>
+    <string name="description">Indexes are a way to measure the performance of your environmental modules. They are calculated based on the telemetry data received from your environmental modules.</string>
+    <string name="environmental_index">Environmental Impact Index\n</string>
+    <string name="feed_management">Metabolic Efficiency Index</string>
+    <string name="feed_status_placeholder">Feed practices are adequate</string>
+    <string name="fill_level_index">Fill Level Index</string>
+    <string name="fill_level_status_placeholder">High fill level detected</string>
+    <string name="external_air_quality_index">External Air Quality Index</string>
+    <string name="external_temperature_humidity_index">External THI</string>
+    <string name="gastrointestinal_index">Gastrointestinal Disease Risk Index</string>
+    <string name="lighting_index">Light Exposure Efficiency Index</string>
+    <string name="lighting_status_placeholder">Optimal lighting conditions</string>
+    <string name="moreInfo"> More information about indexes</string>
+    <string name="noAvailable">There aren\'t any indexes available yet.</string>
+    <string name="parameters">Parameters: </string>
+    <string name="productivity_index">Productivity Index</string>
+    <string name="respiratory_index">Respiratory Disease Risk Index</string>
+    <string name="respiratory_status_placeholder">Risk of respiratory issues</string>
+    <string name="stress_index">Animal Stress Index</string>
+    <string name="stress_status_placeholder">High stress level detected</string>
+    <string name="temperature_humidity_index">Thermal Stress Index (THI)</string>
+    <string name="ventilation_index">Ventilation Efficiency Index</string>
+    <string name="ventilation_status_placeholder">Excessive ventilation</string>
+    <string name="water_infiltration_risk_index">Water Infiltration Risk Index</string>
+    <string name="water_infiltration_status_placeholder">Moderate water infiltration risk detected</string>
 </resources>

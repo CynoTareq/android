@@ -192,7 +192,7 @@ class SensorDataViewModel(private val context: Context) : ViewModel() {
                     val response = result.getOrNull()
                     response?.indexes?.let { indexMap ->
                         val displayItems = indexMap.map { (name, data) ->
-                            IndexDisplayItem(indexTitleFromKey(name), data.score, data.description, data.status)
+                            IndexDisplayItem(name, data.score, data.description, data.status)
                         }
                         _indexes.value = displayItems
                     }
@@ -207,22 +207,6 @@ class SensorDataViewModel(private val context: Context) : ViewModel() {
         }
     }
 
-
-    private fun indexTitleFromKey(key: String): String {
-        return when (key) {
-            "fill_level_index" ->
-                context.getString(R.string.fill_level_index)
-
-            "water_infiltration_risk_index" ->
-                context.getString(R.string.water_infiltration_risk_index)
-
-            "aspergillus_risk_index" ->
-                context.getString(R.string.aspergillus_risk_index)
-
-            else ->
-                key.replace("_", " ").replaceFirstChar { it.uppercase() }
-        }
-    }
 
 
 }

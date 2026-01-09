@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="air_quality_index">Indice di qualità dell\'aria per i lavoratori (AQI)</string>
+    <string name="air_quality_status_placeholder">Qualità dell\'aria ottimale</string>
+    <string name="animal_welfare_index">Benessere animale</string>
+    <string name="aspergillus_risk_index">Indice di rischio Aspergillus</string>
+    <string name="aspergillus_status_placeholder">Rilevato un basso rischio di aspergilli</string>
+    <string name="description">Gli indici sono un modo per misurare le prestazioni dei moduli ambientali. Vengono calcolati in base ai dati telemetrici ricevuti dai moduli ambientali.</string>
+    <string name="environmental_index">Indice di impatto ambientale</string>
+    <string name="feed_management">Indice di efficienza metabolica</string>
+    <string name="feed_status_placeholder">Le pratiche di alimentazione sono adeguate</string>
+    <string name="fill_level_index">Indice del livello di riempimento</string>
+    <string name="fill_level_status_placeholder">Rilevato un livello di riempimento elevato</string>
+    <string name="external_air_quality_index">Indice di qualità dell\'aria esterna</string>
+    <string name="external_temperature_humidity_index">THI esterno</string>
+    <string name="gastrointestinal_index">Indice di rischio malattie gastrointestinali</string>
+    <string name="lighting_index">Indice di efficienza esposizione alla luce</string>
+    <string name="lighting_status_placeholder">Condizioni di illuminazione ottimali</string>
+    <string name="moreInfo"> Ulteriori informazioni sugli indici</string>
+    <string name="noAvailable">Non ci sono ancora indici disponibili.</string>
+    <string name="parameters">Parametri: </string>
+    <string name="productivity_index">Indice di produttività</string>
+    <string name="respiratory_index">Indice di rischio malattie respiratorie</string>
+    <string name="respiratory_status_placeholder">Rischio di problemi respiratori</string>
+    <string name="stress_index">Stress animale</string>
+    <string name="stress_status_placeholder">Rilevato un elevato livello di stress</string>
+    <string name="temperature_humidity_index">Indice di stress termico (THI)</string>
+    <string name="ventilation_index">Indice di efficienza della ventilazione</string>
+    <string name="ventilation_status_placeholder">Ventilazione eccessiva</string>
+    <string name="water_infiltration_risk_index">Indice di rischio di infiltrazione dell\'acqua</string>
+    <string name="water_infiltration_status_placeholder">Rischio moderato di infiltrazione d\'acqua rilevato</string>
+</resources>

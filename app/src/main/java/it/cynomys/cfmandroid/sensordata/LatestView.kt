@@ -26,7 +26,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import it.cynomys.cfmandroid.R
 import it.cynomys.cfmandroid.auth.AuthViewModel
 
 @Composable
@@ -111,13 +114,19 @@ fun LatestView(
                         .height(250.dp) // Explicit height for the horizontal grid
                 ) {
                     items(allIndexDisplayItems.size) { index ->
-                        IndexCard(
-                            title = allIndexDisplayItems[index].name,
-                            value = allIndexDisplayItems[index].score,
-                            description = allIndexDisplayItems[index].description,
-                            status = allIndexDisplayItems[index].status,
-                            maxValue = 100.00
-                        )
+                        val item = allIndexDisplayItems[index]
+                        Box(
+                            modifier = Modifier.width(200.dp) // 👈 FIXED WIDTH
+                        ){
+                            IndexCard(
+                                title = indexTitleFromKey(item.name),
+                                value = allIndexDisplayItems[index].score,
+                                description = allIndexDisplayItems[index].description,
+                                status = allIndexDisplayItems[index].status,
+                                maxValue = 100.00
+                            )
+                        }
+
                     }
                 }
                 Spacer(modifier = Modifier.height(16.dp))
@@ -193,5 +202,22 @@ fun SensorItem(title: String, value: String, unit: String) {
                 )
             }
         }
+    }
+}
+
+@Composable
+fun indexTitleFromKey(key: String): String {
+    val context = LocalContext.current
+
+    val resId = context.resources.getIdentifier(
+        key,
+        "string",
+        context.packageName
+    )
+
+    return if (resId != 0) {
+        stringResource(resId)
+    } else {
+        key.replace("_", " ").replaceFirstChar { it.uppercase() }
     }
 }
