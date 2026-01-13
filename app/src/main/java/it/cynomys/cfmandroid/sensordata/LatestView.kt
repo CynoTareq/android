@@ -119,7 +119,7 @@ fun LatestView(
                             modifier = Modifier.width(200.dp) // 👈 FIXED WIDTH
                         ){
                             IndexCard(
-                                title = indexTitleFromKey(item.name),
+                                title = titleFromKey(item.name),
                                 value = allIndexDisplayItems[index].score,
                                 description = allIndexDisplayItems[index].description,
                                 status = allIndexDisplayItems[index].status,
@@ -153,7 +153,7 @@ fun LatestView(
                 ) {
                     items(allSensorDisplayItems.size) { index ->
                         SensorItem(
-                            title = allSensorDisplayItems[index].name,
+                            title = titleFromKey(allSensorDisplayItems[index].name),
                             value = "%.1f".format(allSensorDisplayItems[index].value),
                             unit = SensorUnit.unitFor(allSensorDisplayItems[index].name)
                         )
@@ -206,7 +206,7 @@ fun SensorItem(title: String, value: String, unit: String) {
 }
 
 @Composable
-fun indexTitleFromKey(key: String): String {
+fun titleFromKey(key: String): String {
     val context = LocalContext.current
 
     val resId = context.resources.getIdentifier(

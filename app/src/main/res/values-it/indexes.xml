@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="air_quality_index">Indice di qualità dell\'aria per i lavoratori (AQI)</string>
     <string name="air_quality_status_placeholder">Qualità dell\'aria ottimale</string>
     <string name="animal_welfare_index">Benessere animale</string>
     <string name="aspergillus_risk_index">Indice di rischio Aspergillus</string>

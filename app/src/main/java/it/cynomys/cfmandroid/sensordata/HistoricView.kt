@@ -165,7 +165,11 @@ fun HistoricView(
                                     .toList(),
                                 key = { (sensorName, _) -> sensorName }
                             ) { (sensorName, values) ->
-                                SensorChart(sensorName, values, from, to)
+                                SensorChart(
+                                    titleFromKey(sensorName),
+                                    values,
+                                    from,
+                                    to)
                             }
                         }
                     } else {

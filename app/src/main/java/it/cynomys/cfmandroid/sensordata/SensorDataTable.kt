@@ -58,7 +58,7 @@ fun SensorDataTable(
                 )
                 selectedSensors.forEach { sensor ->
                     Text(
-                        text = sensor,
+                        text = titleFromKey(sensor),
                         modifier = Modifier
                             .width(100.dp)
                             .padding(horizontal = 8.dp),
