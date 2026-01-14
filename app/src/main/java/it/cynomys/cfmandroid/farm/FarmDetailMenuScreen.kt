@@ -38,14 +38,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import it.cynomys.cfmandroid.R
 import java.util.UUID
 
 // Data class to represent menu items
 data class MenuItemData(
     val icon: ImageVector,
-    val text: String,
+    val text: Int,
     val onClick: () -> Unit
 )
 
@@ -87,13 +89,13 @@ fun FarmDetailMenuScreen(
     ) { padding ->
         // Prepare menu items data
         val deviceManagementItems = listOf(
-            MenuItemData(Icons.Default.Devices, "Devices", onDeviceSelected),
-            MenuItemData(Icons.Default.Storage, "Silos", onSilosSelected)
+            MenuItemData(Icons.Default.Devices,R.string.devices, onDeviceSelected),
+            MenuItemData(Icons.Default.Storage, R.string.silos, onSilosSelected)
         )
 
         val farmManagementItems = listOf(
-            MenuItemData(Icons.Default.WbSunny, "Weather", onWeatherSelected),
-            MenuItemData(Icons.Default.Videocam, "Webcams", onWebcamsSelected)
+            MenuItemData(Icons.Default.WbSunny, R.string.weather, onWeatherSelected),
+            MenuItemData(Icons.Default.Videocam, R.string.webcams, onWebcamsSelected)
         )
 
         if (useGridLayout) {
@@ -187,7 +189,7 @@ fun AdaptiveGridLayout(
             items(items) { item ->
                 MenuItem(
                     icon = item.icon,
-                    text = item.text,
+                    textRes = item.text,
                     onClick = item.onClick,
                     isCompact = true // Compact for square grid card layout
                 )
@@ -213,7 +215,7 @@ fun MenuSection(
         items.forEach { item ->
             MenuItem(
                 icon = item.icon,
-                text = item.text,
+                textRes = item.text,
                 onClick = item.onClick,
                 isCompact = false
             )
@@ -224,10 +226,11 @@ fun MenuSection(
 @Composable
 fun MenuItem(
     icon: ImageVector,
-    text: String,
+    textRes: Int,
     onClick: () -> Unit,
     isCompact: Boolean = false
 ) {
+    val text = stringResource(textRes)
     Card(
         modifier = Modifier
             .fillMaxWidth()

@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="silos">Silo module</string>
+    <string name="devices">Environmental module</string>
+    <string name="weather">Weather</string>
+    <string name="webcams">Webcams</string>
     <string name="aboveMaximum">Above maximum threshold set on %1$s</string>
     <string name="actions">Actions</string>
     <string name="addDailyData">Add Daily Data</string>
