@@ -73,6 +73,9 @@
     <string name="wentWrong">Une erreur s\'est produite. Réessayez.</string>
     <string name="WetBulbTemp">Température du bulbe humide</string>
     <string name="wind_speed">Vitesse du vent</string>
+    <string name="predictions">Prédictions</string>
     <string name="silos">Module silo</string>
     <string name="devices">Module environnemental</string>
+    <string name="historic">Données en temps réel</string>
+    <string name="indexes">Index</string>
 </resources>

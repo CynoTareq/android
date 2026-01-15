@@ -29,4 +29,7 @@
     <string name="ventilation_status_placeholder">Ventilació excessiva</string>
     <string name="water_infiltration_risk_index">Índex de risc d\'infiltració d\'aigua</string>
     <string name="water_infiltration_status_placeholder">S\'ha detectat un risc moderat d\'infiltració d\'aigua</string>
+    <string name="historic">Datos en tiempo real</string>
+    <string name="indexes">Índices</string>
+    <string name="predictions">Predicciones</string>
 </resources>

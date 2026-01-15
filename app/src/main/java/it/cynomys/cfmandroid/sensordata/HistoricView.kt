@@ -35,8 +35,10 @@ import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import it.cynomys.cfmandroid.R
 import it.cynomys.cfmandroid.view.common.SensorChart
 import java.util.Calendar
 import java.util.Date
@@ -113,7 +115,7 @@ fun HistoricView(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Historic Data") },
+                title = { Text(stringResource(R.string.historic)) },
                 actions = {
                     IconButton(onClick = { showSheet = true }) {
                         Icon(Icons.Default.FilterList, contentDescription = "Filter")

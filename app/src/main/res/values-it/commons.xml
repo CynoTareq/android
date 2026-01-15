@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="predictions">Previsioni</string>
     <string name="silos">Modulo silos</string>
     <string name="devices">Modulo ambiente</string>
     <string name="weather">Meteo</string>
@@ -77,4 +78,6 @@
     <string name="wentWrong">Qualcosa è andato storto. Riprova.</string>
     <string name="WetBulbTemp">Temperatura di bulbo umido</string>
     <string name="wind_speed">Velocità del vento</string>
+    <string name="historic">Dati in tempo reale</string>
+    <string name="indexes">Indici</string>
 </resources>

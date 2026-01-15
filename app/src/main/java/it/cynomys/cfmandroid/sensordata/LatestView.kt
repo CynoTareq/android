@@ -99,7 +99,7 @@ fun LatestView(
         ) {
             if (allIndexDisplayItems.isNotEmpty()) {
                 Text(
-                    text = "Indexes",
+                    text = stringResource(R.string.indexes),
                     style = MaterialTheme.typography.headlineSmall,
                     modifier = Modifier.padding(bottom = 8.dp)
                 )
