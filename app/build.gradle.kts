@@ -16,7 +16,7 @@ android {
         applicationId = "it.cynomys.cfmandroid"
         minSdk = 24
         targetSdk = 35
-        versionCode = 6
+        versionCode = 7
         versionName = "2.6"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
