@@ -26,7 +26,7 @@ data class ProfileDto(
     @Serializable(with = UUIDSerializer::class)
     val parentOwnerId: UUID? = null,
     @Serializable(with = UUIDSerializer::class)
-    val roleId: UUID? = null
+    val roleIds: UUID? = null
 )
 
 // DTO for the PUT /api/owner/{ownerId}/settings request/response
@@ -58,7 +58,7 @@ fun ProfileDto.toOwner(): Owner {
         ),
         isFreeUser = isFreeUser,
         parentOwnerId = parentOwnerId,
-        roleId = roleId
+        roleIds = roleIds
     )
 }
 
@@ -110,6 +110,6 @@ fun Owner.toProfileDto(): ProfileDto {
         hasAverage = settings?.hasAverage ?: false,
         isFreeUser = isFreeUser,
         parentOwnerId = parentOwnerId,
-        roleId = roleId
+        roleIds = roleIds
     )
 }

@@ -16,7 +16,7 @@ android {
         applicationId = "it.cynomys.cfmandroid"
         minSdk = 24
         targetSdk = 35
-        versionCode = 7
+        versionCode = 9
         versionName = "2.6"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
@@ -32,6 +32,11 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+        }
+    }
+    bundle {
+        language {
+            enableSplit = false
         }
     }
     compileOptions {

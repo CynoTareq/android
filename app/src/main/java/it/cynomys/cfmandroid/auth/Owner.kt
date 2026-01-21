@@ -54,7 +54,7 @@ data class Owner(
     @Serializable(with = UUIDSerializer::class)
     val parentOwnerId: UUID? = null,
     @Serializable(with = UUIDSerializer::class)
-    val roleId: UUID? = null
+    val roleIds: UUID? = null
 )
 
 @Serializable
